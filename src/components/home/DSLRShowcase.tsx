@@ -11,6 +11,8 @@ gsap.registerPlugin(ScrollTrigger);
 const TOTAL_FRAMES = 300;
 const DESKTOP_FRAME_PATH = '/sequences/dslr_assembly';
 const MOBILE_FRAME_PATH = '/sequences/dslr_mobile';
+const INITIAL_PRELOAD_FRAMES = 20;
+const FRAME_LOOKAHEAD = 12;
 const START_HOLD = 24;
 const END_HOLD = 36;
 const PIXELS_PER_TIMELINE_UNIT = 18;
@@ -43,39 +45,71 @@ export function DSLRShowcase() {
   const textRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [imagesLoaded, setImagesLoaded] = useState(false);
   const imagesRef = useRef<HTMLImageElement[]>([]);
+  const loadedFramesRef = useRef<boolean[]>([]);
+  const loadingFramesRef = useRef<Set<number>>(new Set());
+  const loadFrameRef = useRef<(index: number) => Promise<void>>(() => Promise.resolve());
+  const renderFrameRef = useRef<() => void>(() => undefined);
   const frameIndexRef = useRef({ value: 0 });
   const lastFrameRef = useRef(-1);
 
   useEffect(() => {
-    const images: HTMLImageElement[] = [];
-    let settledCount = 0;
+    const images = Array.from({ length: TOTAL_FRAMES }) as HTMLImageElement[];
+    const loadedFrames = Array.from({ length: TOTAL_FRAMES }, () => false);
     let isCancelled = false;
     const framePath = window.matchMedia('(max-width: 767px)').matches
       ? MOBILE_FRAME_PATH
       : DESKTOP_FRAME_PATH;
-    const markSettled = () => {
-      settledCount += 1;
-      if (!isCancelled && settledCount === TOTAL_FRAMES) {
-        setImagesLoaded(true);
+
+    const loadFrame = (index: number) => {
+      if (index < 0 || index >= TOTAL_FRAMES) return Promise.resolve();
+      if (loadedFrames[index] || loadingFramesRef.current.has(index)) {
+        return Promise.resolve();
       }
+
+      loadingFramesRef.current.add(index);
+
+      return new Promise<void>((resolve) => {
+        const img = new window.Image();
+        const frameNum = String(index).padStart(6, '0');
+
+        img.onload = () => {
+          loadedFrames[index] = true;
+          loadingFramesRef.current.delete(index);
+          renderFrameRef.current();
+          resolve();
+        };
+        img.onerror = () => {
+          loadingFramesRef.current.delete(index);
+          resolve();
+        };
+        img.src = `${framePath}/frame_${frameNum}.png`;
+        images[index] = img;
+      });
     };
 
-    for (let i = 0; i < TOTAL_FRAMES; i += 1) {
-      const img = new window.Image();
-      const frameNum = String(i).padStart(6, '0');
-      img.src = `${framePath}/frame_${frameNum}.png`;
-      img.onload = markSettled;
-      img.onerror = markSettled;
-      images[i] = img;
-    }
-
     imagesRef.current = images;
+    loadedFramesRef.current = loadedFrames;
+    loadingFramesRef.current = new Set();
+    loadFrameRef.current = loadFrame;
+
+    Promise.all(
+      Array.from({ length: INITIAL_PRELOAD_FRAMES }, (_, index) => loadFrame(index))
+    ).then(async () => {
+      if (isCancelled) return;
+      setImagesLoaded(true);
+
+      for (let i = INITIAL_PRELOAD_FRAMES; i < TOTAL_FRAMES && !isCancelled; i += 1) {
+        await loadFrame(i);
+      }
+    });
 
     return () => {
       isCancelled = true;
       images.forEach((img) => {
-        img.onload = null;
-        img.onerror = null;
+        if (img) {
+          img.onload = null;
+          img.onerror = null;
+        }
       });
     };
   }, []);
@@ -96,10 +130,39 @@ export function DSLRShowcase() {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
+    const queueNearbyFrames = (frame: number) => {
+      for (
+        let index = frame;
+        index <= Math.min(TOTAL_FRAMES - 1, frame + FRAME_LOOKAHEAD);
+        index += 1
+      ) {
+        void loadFrameRef.current(index);
+      }
+    };
+
+    const findRenderableFrame = (frame: number) => {
+      if (loadedFramesRef.current[frame]) return frame;
+
+      for (let distance = 1; distance < TOTAL_FRAMES; distance += 1) {
+        const previous = frame - distance;
+        const next = frame + distance;
+
+        if (previous >= 0 && loadedFramesRef.current[previous]) return previous;
+        if (next < TOTAL_FRAMES && loadedFramesRef.current[next]) return next;
+      }
+
+      return -1;
+    };
+
     const updateCanvas = () => {
       const currentIndex = Math.round(frameIndexRef.current.value);
       const clamped = Math.max(0, Math.min(currentIndex, TOTAL_FRAMES - 1));
-      const img = imagesRef.current[clamped];
+      queueNearbyFrames(clamped);
+
+      const renderableFrame = findRenderableFrame(clamped);
+      if (renderableFrame < 0) return;
+
+      const img = imagesRef.current[renderableFrame];
       if (!img || !img.complete || !img.naturalWidth) return;
 
       ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
@@ -113,6 +176,7 @@ export function DSLRShowcase() {
       const y = (canvas.offsetHeight - img.height * scale) / 2;
       ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
     };
+    renderFrameRef.current = updateCanvas;
 
     resizeCanvas();
     updateCanvas();

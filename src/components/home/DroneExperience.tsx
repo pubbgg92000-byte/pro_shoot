@@ -11,6 +11,8 @@ gsap.registerPlugin(ScrollTrigger);
 const TOTAL_FRAMES = 300;
 const DESKTOP_FRAME_PATH = '/sequences/drone_hover';
 const MOBILE_FRAME_PATH = '/sequences/drone_mobile';
+const INITIAL_PRELOAD_FRAMES = 20;
+const FRAME_LOOKAHEAD = 12;
 const TEXT_REVEAL_FRAME = 150;
 const TEXT_REVEAL_DURATION = 24;
 const FINAL_HOLD_DURATION = 72;
@@ -22,38 +24,70 @@ export function DroneExperience() {
   const contentRef = useRef<HTMLDivElement>(null);
   const [loaded, setLoaded] = useState(false);
   const imagesRef = useRef<HTMLImageElement[]>([]);
+  const loadedFramesRef = useRef<boolean[]>([]);
+  const loadingFramesRef = useRef<Set<number>>(new Set());
+  const loadFrameRef = useRef<(index: number) => Promise<void>>(() => Promise.resolve());
+  const renderFrameRef = useRef<() => void>(() => undefined);
   const frameRef = useRef({ value: 0 });
   const lastFrameRef = useRef(-1);
 
   useEffect(() => {
-    const images: HTMLImageElement[] = [];
-    let settledCount = 0;
+    const images = Array.from({ length: TOTAL_FRAMES }) as HTMLImageElement[];
+    const loadedFrames = Array.from({ length: TOTAL_FRAMES }, () => false);
     let isCancelled = false;
     const framePath = window.matchMedia('(max-width: 767px)').matches
       ? MOBILE_FRAME_PATH
       : DESKTOP_FRAME_PATH;
-    const markSettled = () => {
-      settledCount += 1;
-      if (!isCancelled && settledCount === TOTAL_FRAMES) {
-        setLoaded(true);
+
+    const loadFrame = (index: number) => {
+      if (index < 0 || index >= TOTAL_FRAMES) return Promise.resolve();
+      if (loadedFrames[index] || loadingFramesRef.current.has(index)) {
+        return Promise.resolve();
       }
+
+      loadingFramesRef.current.add(index);
+
+      return new Promise<void>((resolve) => {
+        const img = new window.Image();
+
+        img.onload = () => {
+          loadedFrames[index] = true;
+          loadingFramesRef.current.delete(index);
+          renderFrameRef.current();
+          resolve();
+        };
+        img.onerror = () => {
+          loadingFramesRef.current.delete(index);
+          resolve();
+        };
+        img.src = `${framePath}/frame_${String(index).padStart(6, '0')}.png`;
+        images[index] = img;
+      });
     };
 
-    for (let i = 0; i < TOTAL_FRAMES; i += 1) {
-      const img = new window.Image();
-      img.src = `${framePath}/frame_${String(i).padStart(6, '0')}.png`;
-      img.onload = markSettled;
-      img.onerror = markSettled;
-      images[i] = img;
-    }
-
     imagesRef.current = images;
+    loadedFramesRef.current = loadedFrames;
+    loadingFramesRef.current = new Set();
+    loadFrameRef.current = loadFrame;
+
+    Promise.all(
+      Array.from({ length: INITIAL_PRELOAD_FRAMES }, (_, index) => loadFrame(index))
+    ).then(async () => {
+      if (isCancelled) return;
+      setLoaded(true);
+
+      for (let i = INITIAL_PRELOAD_FRAMES; i < TOTAL_FRAMES && !isCancelled; i += 1) {
+        await loadFrame(i);
+      }
+    });
 
     return () => {
       isCancelled = true;
       images.forEach((img) => {
-        img.onload = null;
-        img.onerror = null;
+        if (img) {
+          img.onload = null;
+          img.onerror = null;
+        }
       });
     };
   }, []);
@@ -74,10 +108,39 @@ export function DroneExperience() {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
+    const queueNearbyFrames = (frame: number) => {
+      for (
+        let index = frame;
+        index <= Math.min(TOTAL_FRAMES - 1, frame + FRAME_LOOKAHEAD);
+        index += 1
+      ) {
+        void loadFrameRef.current(index);
+      }
+    };
+
+    const findRenderableFrame = (frame: number) => {
+      if (loadedFramesRef.current[frame]) return frame;
+
+      for (let distance = 1; distance < TOTAL_FRAMES; distance += 1) {
+        const previous = frame - distance;
+        const next = frame + distance;
+
+        if (previous >= 0 && loadedFramesRef.current[previous]) return previous;
+        if (next < TOTAL_FRAMES && loadedFramesRef.current[next]) return next;
+      }
+
+      return -1;
+    };
+
     const draw = () => {
       const currentIndex = Math.round(frameRef.current.value);
       const clamped = Math.max(0, Math.min(currentIndex, TOTAL_FRAMES - 1));
-      const img = imagesRef.current[clamped];
+      queueNearbyFrames(clamped);
+
+      const renderableFrame = findRenderableFrame(clamped);
+      if (renderableFrame < 0) return;
+
+      const img = imagesRef.current[renderableFrame];
       if (!img?.complete || !img.naturalWidth) return;
 
       ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
@@ -91,6 +154,7 @@ export function DroneExperience() {
       const y = (canvas.offsetHeight - img.height * scale) / 2;
       ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
     };
+    renderFrameRef.current = draw;
 
     resizeCanvas();
     draw();

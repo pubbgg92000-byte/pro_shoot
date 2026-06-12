@@ -27,6 +27,9 @@ const inter = Inter({
   weight: ['300', '400', '500', '600', '700', '800'],
 });
 
+const siteUrl = 'https://proshoot-gamma.vercel.app';
+const previewImage = `${siteUrl}/images/social-preview.png`;
+
 export const metadata: Metadata = {
   title: {
     default: 'Pro Shoot — Premium Photography & Cinematic Storytelling',
@@ -42,20 +45,20 @@ export const metadata: Metadata = {
   authors: [{ name: 'Pro Shoot Studios' }],
   creator: 'Pro Shoot',
   publisher: 'Pro Shoot Studios',
-  metadataBase: new URL('https://proshoot.in'),
+  metadataBase: new URL(siteUrl),
   openGraph: {
     type: 'website',
     locale: 'en_IN',
-    url: 'https://proshoot.in',
+    url: siteUrl,
     siteName: 'Pro Shoot',
     title: 'Pro Shoot — Premium Photography & Cinematic Storytelling',
     description: 'Award-winning luxury photography studio crafting timeless imagery for weddings, families, and brands.',
     images: [
       {
-        url: '/images/shoot-3.png',
+        url: previewImage,
         width: 1200,
         height: 630,
-        alt: 'Pro Shoot — Luxury Photography',
+        alt: 'Pro Shoot — Premium photography and cinematic storytelling',
       },
     ],
   },
@@ -63,7 +66,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Pro Shoot — Premium Photography & Cinematic Storytelling',
     description: 'Award-winning luxury photography studio crafting timeless imagery for weddings, families, and brands.',
-    images: ['/images/shoot-3.png'],
+    images: [previewImage],
   },
   robots: {
     index: true,
@@ -81,13 +84,13 @@ export const metadata: Metadata = {
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
-  '@id': 'https://proshoot.in',
+  '@id': siteUrl,
   name: 'Pro Shoot Studios',
   description: 'Award-winning luxury photography studio specializing in weddings, pre-wedding shoots, baby photography, fashion, corporate, and cinematic storytelling.',
-  url: 'https://proshoot.in',
+  url: siteUrl,
   telephone: '+919876543210',
   email: 'hello@proshoot.in',
-  image: 'https://proshoot.in/images/shoot-3.png',
+  image: previewImage,
   address: {
     '@type': 'PostalAddress',
     streetAddress: '42, MG Road, Indiranagar',
