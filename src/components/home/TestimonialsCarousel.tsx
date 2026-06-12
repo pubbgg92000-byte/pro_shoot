@@ -14,8 +14,7 @@ export function TestimonialsCarousel() {
   const trackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReduced || !trackRef.current) return;
+    if (!trackRef.current) return;
 
     const track = trackRef.current;
 

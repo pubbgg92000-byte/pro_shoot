@@ -23,8 +23,7 @@ export function PortfolioShowcase() {
   const cardsRef = useRef<HTMLDivElement[]>([]);
 
   useEffect(() => {
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReduced || !sectionRef.current || !containerRef.current) return;
+    if (!sectionRef.current || !containerRef.current) return;
 
     const ctx = gsap.context(() => {
       // Calculate how far to move left

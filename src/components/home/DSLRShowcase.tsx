@@ -41,11 +41,10 @@ export function DSLRShowcase() {
   const frameIndexRef = useRef({ value: 0 });
 
   useEffect(() => {
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const images: HTMLImageElement[] = [];
     let loadedCount = 0;
 
-    const framesToLoad = prefersReduced ? 1 : Math.min(TOTAL_FRAMES, 150);
+    const framesToLoad = Math.min(TOTAL_FRAMES, 150);
     const step = Math.ceil(TOTAL_FRAMES / framesToLoad);
 
     for (let i = 0; i < TOTAL_FRAMES; i += step) {
@@ -73,15 +72,14 @@ export function DSLRShowcase() {
 
   useEffect(() => {
     if (!imagesLoaded || !canvasRef.current || !sectionRef.current) return;
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReduced) return;
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
     const updateCanvas = () => {
-      const img = imagesRef.current[frameIndexRef.current.value];
+      const currentIndex = Math.round(frameIndexRef.current.value);
+      const img = imagesRef.current[currentIndex];
       if (!img || !img.complete) return;
 
       canvas.width = canvas.offsetWidth * window.devicePixelRatio;
@@ -109,7 +107,7 @@ export function DSLRShowcase() {
           trigger: sectionRef.current,
           start: 'top top',
           end: 'bottom bottom',
-          scrub: 0.5,
+          scrub: true,
           pin: false,
         },
         onUpdate: updateCanvas,

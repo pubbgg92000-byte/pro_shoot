@@ -43,15 +43,14 @@ export function DroneExperience() {
 
   useEffect(() => {
     if (!loaded || !canvasRef.current || !sectionRef.current) return;
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReduced) return;
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
     const draw = () => {
-      const img = imagesRef.current[frameRef.current.value];
+      const currentIndex = Math.round(frameRef.current.value);
+      const img = imagesRef.current[currentIndex];
       if (!img?.complete) return;
       canvas.width = canvas.offsetWidth * window.devicePixelRatio;
       canvas.height = canvas.offsetHeight * window.devicePixelRatio;
@@ -73,7 +72,7 @@ export function DroneExperience() {
           trigger: sectionRef.current,
           start: 'top top',
           end: 'bottom bottom',
-          scrub: 0.5,
+          scrub: true,
         },
         onUpdate: draw,
       });
@@ -103,20 +102,22 @@ export function DroneExperience() {
         />
 
         {/* Content overlay */}
-        <div className="relative z-10 text-center container-luxury">
-          <p className="text-xs uppercase tracking-[0.3em] text-gold mb-4">Aerial Photography</p>
-          <h2 className="font-heading text-4xl md:text-6xl lg:text-7xl text-text-primary mb-4">
-            Elevated <span className="text-gold-gradient">Perspectives</span>
-          </h2>
-          <p className="font-subheading text-lg md:text-xl text-text-secondary max-w-lg mx-auto mb-8">
-            Professional aerial photography and cinematography that reveals the grandeur invisible to the human eye
-          </p>
-          <Link
-            href="/services/drone-photography"
-            className="inline-flex items-center gap-2 px-8 py-4 border border-gold/30 rounded-full text-gold text-sm uppercase tracking-wider hover:bg-gold/10 transition-all duration-300"
-          >
-            Explore Aerial Services
-          </Link>
+        <div className="absolute bottom-0 left-0 right-0 z-10 text-center container-luxury pb-16 md:pb-32 pt-32 bg-gradient-to-t from-bg-primary via-bg-primary/80 to-transparent pointer-events-none flex flex-col items-center">
+          <div className="pointer-events-auto">
+            <p className="text-xs uppercase tracking-[0.3em] text-gold mb-4">Aerial Photography</p>
+            <h2 className="font-heading text-4xl md:text-6xl lg:text-7xl text-text-primary mb-4">
+              Elevated <span className="text-gold-gradient">Perspectives</span>
+            </h2>
+            <p className="font-subheading text-lg md:text-xl text-text-secondary max-w-lg mx-auto mb-8">
+              Professional aerial photography and cinematography that reveals the grandeur invisible to the human eye
+            </p>
+            <Link
+              href="/services/drone-photography"
+              className="inline-flex items-center gap-2 px-8 py-4 border border-gold/30 rounded-full text-gold text-sm uppercase tracking-wider hover:bg-gold/10 transition-all duration-300"
+            >
+              Explore Aerial Services
+            </Link>
+          </div>
         </div>
       </div>
     </section>

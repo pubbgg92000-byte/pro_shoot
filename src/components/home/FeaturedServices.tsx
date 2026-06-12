@@ -18,8 +18,6 @@ export function FeaturedServices() {
   const featured = SERVICES.filter((s) => s.featured);
 
   useEffect(() => {
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReduced) return;
 
     const ctx = gsap.context(() => {
       // Heading reveal

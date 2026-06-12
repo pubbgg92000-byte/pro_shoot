@@ -130,7 +130,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${playfair.variable} ${cormorant.variable} ${inter.variable}`}
+      className={`${playfair.variable} ${cormorant.variable} ${inter.variable} overflow-x-clip`}
     >
       <head>
         <link rel="manifest" href="/manifest.webmanifest" />
@@ -140,9 +140,9 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="min-h-screen flex flex-col bg-bg-primary text-text-primary antialiased">
+      <body suppressHydrationWarning className="min-h-screen flex flex-col bg-bg-primary text-text-primary antialiased overflow-x-clip w-full">
         <Navbar />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 overflow-x-clip">{children}</main>
         <Footer />
       </body>
     </html>

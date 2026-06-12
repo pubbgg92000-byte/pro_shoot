@@ -21,32 +21,27 @@ export function StatsSection() {
   const counterRefs = useRef<(HTMLSpanElement | null)[]>([]);
 
   useEffect(() => {
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReduced) return;
 
     const ctx = gsap.context(() => {
       counterRefs.current.forEach((el, i) => {
         if (!el) return;
 
-        gsap.fromTo(
-          { val: 0 },
-          { val: STATS[i].value },
-          {
-            val: STATS[i].value,
-            duration: 2.5,
-            ease: 'power2.out',
-            scrollTrigger: {
-              trigger: el,
-              start: 'top 85%',
-              toggleActions: 'play none none reverse',
-            },
-            onUpdate: function () {
-              if (el) {
-                el.textContent = Math.floor(this.targets()[0].val).toLocaleString();
-              }
-            },
-          }
-        );
+        const obj = { val: 0 };
+        gsap.to(obj, {
+          val: STATS[i].value,
+          duration: 2,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top 85%',
+            toggleActions: 'play none none none',
+          },
+          onUpdate: function () {
+            if (el) {
+              el.textContent = Math.floor(obj.val).toLocaleString();
+            }
+          },
+        });
       });
     }, sectionRef);
 

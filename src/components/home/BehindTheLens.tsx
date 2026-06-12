@@ -14,8 +14,6 @@ export function BehindTheLens() {
   const textRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReduced) return;
 
     const ctx = gsap.context(() => {
       gsap.fromTo(imageRef.current, { x: -80, opacity: 0 }, {
