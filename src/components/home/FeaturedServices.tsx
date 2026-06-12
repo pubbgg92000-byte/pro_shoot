@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { SERVICES } from '@/lib/constants';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
 import { ArrowUpRight } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -17,50 +18,45 @@ export function FeaturedServices() {
 
   const featured = SERVICES.filter((s) => s.featured);
 
-  useEffect(() => {
-
-    const ctx = gsap.context(() => {
-      // Heading reveal
-      if (headingRef.current) {
-        gsap.fromTo(
-          headingRef.current,
-          { y: 60, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: 1,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: headingRef.current,
-              start: 'top 85%',
-              toggleActions: 'play none none reverse',
-            },
-          }
-        );
-      }
-
-      // Stagger card reveals
-      const cards = cardsRef.current.filter(Boolean);
+  useGSAP(() => {
+    // Heading reveal
+    if (headingRef.current) {
       gsap.fromTo(
-        cards,
-        { y: 80, opacity: 0 },
+        headingRef.current,
+        { y: 60, opacity: 0 },
         {
           y: 0,
           opacity: 1,
-          duration: 0.8,
-          stagger: 0.1,
+          duration: 1,
           ease: 'power3.out',
           scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 70%',
-            toggleActions: 'play none none reverse',
+            trigger: headingRef.current,
+            start: 'top 85%',
+            once: true,
           },
         }
       );
-    }, sectionRef);
+    }
 
-    return () => ctx.revert();
-  }, []);
+    // Stagger card reveals
+    const cards = cardsRef.current.filter(Boolean);
+    gsap.fromTo(
+      cards,
+      { y: 80, opacity: 0 },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 0.8,
+        stagger: 0.1,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 70%',
+          once: true,
+        },
+      }
+    );
+  }, { scope: sectionRef });
 
   return (
     <section ref={sectionRef} className="section-padding bg-bg-primary relative" id="services">

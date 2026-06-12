@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import Image from 'next/image';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
 import { BRAND } from '@/lib/constants';
 import { Camera, Award, Heart, MapPin } from 'lucide-react';
 
@@ -20,33 +21,28 @@ export function StatsSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const counterRefs = useRef<(HTMLSpanElement | null)[]>([]);
 
-  useEffect(() => {
+  useGSAP(() => {
+    counterRefs.current.forEach((el, i) => {
+      if (!el) return;
 
-    const ctx = gsap.context(() => {
-      counterRefs.current.forEach((el, i) => {
-        if (!el) return;
-
-        const obj = { val: 0 };
-        gsap.to(obj, {
-          val: STATS[i].value,
-          duration: 2,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 85%',
-            toggleActions: 'play none none none',
-          },
-          onUpdate: function () {
-            if (el) {
-              el.textContent = Math.floor(obj.val).toLocaleString();
-            }
-          },
-        });
+      const obj = { val: 0 };
+      gsap.to(obj, {
+        val: STATS[i].value,
+        duration: 2,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 85%',
+          toggleActions: 'play none none none',
+        },
+        onUpdate: function () {
+          if (el) {
+            el.textContent = Math.floor(obj.val).toLocaleString();
+          }
+        },
       });
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
+    });
+  }, { scope: sectionRef });
 
   return (
     <section ref={sectionRef} className="section-padding bg-bg-primary relative overflow-hidden" id="stats">

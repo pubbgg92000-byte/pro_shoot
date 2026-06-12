@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -13,28 +14,40 @@ export function BehindTheLens() {
   const imageRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useGSAP(() => {
+    if (!sectionRef.current || !imageRef.current || !textRef.current) return;
 
-    const ctx = gsap.context(() => {
-      gsap.fromTo(imageRef.current, { x: -80, opacity: 0 }, {
-        x: 0, opacity: 1, duration: 1.2, ease: 'power3.out',
-        scrollTrigger: { trigger: sectionRef.current, start: 'top 75%', toggleActions: 'play none none reverse' },
-      });
-      gsap.fromTo(textRef.current, { x: 80, opacity: 0 }, {
-        x: 0, opacity: 1, duration: 1.2, ease: 'power3.out',
-        scrollTrigger: { trigger: sectionRef.current, start: 'top 75%', toggleActions: 'play none none reverse' },
-      });
-    }, sectionRef);
+    const timeline = gsap.timeline({
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: 'top 85%',
+        end: 'top 35%',
+        scrub: 1,
+        invalidateOnRefresh: true,
+      },
+    });
 
-    return () => ctx.revert();
-  }, []);
+    timeline
+      .fromTo(
+        imageRef.current,
+        { autoAlpha: 0, xPercent: -12, scale: 0.94 },
+        { autoAlpha: 1, xPercent: 0, scale: 1, duration: 1, ease: 'power2.out' },
+        0
+      )
+      .fromTo(
+        textRef.current,
+        { autoAlpha: 0, xPercent: 12, y: 32 },
+        { autoAlpha: 1, xPercent: 0, y: 0, duration: 1, ease: 'power2.out' },
+        0.08
+      );
+  }, { scope: sectionRef });
 
   return (
     <section ref={sectionRef} className="section-padding bg-bg-primary" id="behind-the-lens">
       <div className="container-luxury">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           {/* Image */}
-          <div ref={imageRef} className="relative aspect-[4/5] rounded-2xl overflow-hidden">
+          <div ref={imageRef} className="relative aspect-[4/5] rounded-2xl overflow-hidden will-change-transform">
             <Image
               src="/images/shoot-2.png"
               alt="Behind the lens — our photography process"
@@ -49,32 +62,27 @@ export function BehindTheLens() {
           </div>
 
           {/* Text */}
-          <div ref={textRef}>
+          <div ref={textRef} className="will-change-transform">
             <p className="text-xs uppercase tracking-[0.3em] text-gold mb-4">Behind The Lens</p>
-            <h2 className="font-heading text-4xl md:text-5xl mb-8">
-              Every Frame Tells a <span className="text-gold-gradient">Story</span>
+            <h2 className="font-heading text-4xl md:text-5xl mb-6">
+              The Art of <span className="text-gold-gradient">Storytelling</span>
             </h2>
-            <p className="text-text-secondary text-lg leading-relaxed mb-6">
-              Behind every stunning photograph is a process of patience, vision, and relentless pursuit of perfection.
-              We don&apos;t just point cameras — we orchestrate light, emotion, and atmosphere to create imagery
-              that transcends the ordinary.
-            </p>
-            <p className="text-text-secondary leading-relaxed mb-8">
-              Our team combines decades of combined experience with cutting-edge technology and an unwavering commitment
-              to artistic excellence. From the initial consultation to the final delivery, every step is designed to exceed
-              your expectations.
-            </p>
-            <div className="flex items-center gap-4 mb-8">
-              <div className="w-16 h-px bg-gold" />
-              <p className="font-subheading text-gold italic text-lg">
-                &ldquo;Every story deserves perfection&rdquo;
+            <div className="space-y-4 text-text-secondary leading-relaxed mb-8">
+              <p>
+                Every photograph we create is born from a deep understanding of light, emotion,
+                and the subtle dance between moments. Our approach goes beyond traditional
+                photography — we craft visual narratives that speak to the soul.
+              </p>
+              <p>
+                With a team of passionate artists and state-of-the-art equipment, we transform
+                ordinary moments into extraordinary memories that last generations.
               </p>
             </div>
             <Link
               href="/about"
               className="inline-flex items-center gap-2 px-8 py-4 border border-gold/30 rounded-full text-gold text-sm uppercase tracking-wider hover:bg-gold/5 transition-all duration-300"
             >
-              Our Story
+              Our Story →
             </Link>
           </div>
         </div>

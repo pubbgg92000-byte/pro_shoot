@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
 import { ChevronDown } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -18,83 +19,78 @@ export function HeroSection() {
   const overlayRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useGSAP(() => {
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+    // Image scale in
+    tl.fromTo(
+      imageRef.current,
+      { scale: 1.2, opacity: 0 },
+      { scale: 1, opacity: 1, duration: 1.8 }
+    );
 
-      // Image scale in
+    // Overlay fade
+    tl.fromTo(
+      overlayRef.current,
+      { opacity: 0 },
+      { opacity: 1, duration: 1 },
+      0.3
+    );
+
+    // Split heading animation — word by word
+    const headingEl = headingRef.current;
+    if (headingEl) {
+      const lines = headingEl.querySelectorAll('.hero-line');
       tl.fromTo(
-        imageRef.current,
-        { scale: 1.2, opacity: 0 },
-        { scale: 1, opacity: 1, duration: 1.8 }
-      );
-
-      // Overlay fade
-      tl.fromTo(
-        overlayRef.current,
-        { opacity: 0 },
-        { opacity: 1, duration: 1 },
-        0.3
-      );
-
-      // Split heading animation — word by word
-      const headingEl = headingRef.current;
-      if (headingEl) {
-        const lines = headingEl.querySelectorAll('.hero-line');
-        tl.fromTo(
-          lines,
-          { y: 100, opacity: 0, rotateX: -40 },
-          {
-            y: 0,
-            opacity: 1,
-            rotateX: 0,
-            duration: 1,
-            stagger: 0.15,
-          },
-          0.6
-        );
-      }
-
-      // Subheading
-      tl.fromTo(
-        subRef.current,
-        { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.8 },
-        1.2
-      );
-
-      // CTAs
-      tl.fromTo(
-        ctaRef.current,
-        { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.8 },
-        1.5
-      );
-
-      // Scroll indicator
-      tl.fromTo(
-        scrollRef.current,
-        { opacity: 0 },
-        { opacity: 1, duration: 0.6 },
-        2
-      );
-
-      // Parallax on scroll
-      gsap.to(imageRef.current, {
-        y: 150,
-        scale: 1.1,
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top top',
-          end: 'bottom top',
-          scrub: 1,
+        lines,
+        { y: 100, opacity: 0, rotateX: -40 },
+        {
+          y: 0,
+          opacity: 1,
+          rotateX: 0,
+          duration: 1,
+          stagger: 0.15,
         },
-      });
-    }, sectionRef);
+        0.6
+      );
+    }
 
-    return () => ctx.revert();
-  }, []);
+    // Subheading
+    tl.fromTo(
+      subRef.current,
+      { y: 30, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.8 },
+      1.2
+    );
+
+    // CTAs
+    tl.fromTo(
+      ctaRef.current,
+      { y: 30, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.8 },
+      1.5
+    );
+
+    // Scroll indicator
+    tl.fromTo(
+      scrollRef.current,
+      { opacity: 0 },
+      { opacity: 1, duration: 0.6 },
+      2
+    );
+
+    // Parallax on scroll
+    gsap.to(imageRef.current, {
+      y: 150,
+      scale: 1.1,
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: 'top top',
+        end: 'bottom top',
+        scrub: 1,
+      },
+    });
+  }, { scope: sectionRef });
 
   return (
     <section
@@ -115,7 +111,7 @@ export function HeroSection() {
         />
       </div>
 
-      {/* Gradient Overlays — darkened for legibility */}
+      {/* Gradient Overlays */}
       <div ref={overlayRef} className="absolute inset-0 opacity-0">
         <div className="absolute inset-0 bg-black/60" />
         <div className="absolute inset-0 bg-gradient-to-b from-bg-primary/80 via-transparent to-bg-primary" />

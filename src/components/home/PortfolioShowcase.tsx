@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -22,57 +23,65 @@ export function PortfolioShowcase() {
   const containerRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLDivElement[]>([]);
 
-  useEffect(() => {
-    if (!sectionRef.current || !containerRef.current) return;
+  useGSAP(() => {
+    if (!containerRef.current || !sectionRef.current) return;
 
-    const ctx = gsap.context(() => {
-      // Calculate how far to move left
-      const getScrollAmount = () => {
-        let containerWidth = containerRef.current?.scrollWidth || 0;
-        return -(containerWidth - window.innerWidth);
-      };
+    const getTravelDistance = () =>
+      Math.max(0, containerRef.current!.scrollWidth - window.innerWidth);
+    const getHoldDistance = () => Math.max(120, window.innerWidth * 0.12);
 
-      const tween = gsap.to(containerRef.current, {
-        x: getScrollAmount,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top top',
-          end: () => `+=${getScrollAmount() * -1}`,
-          pin: true,
-          scrub: 1,
-          invalidateOnRefresh: true,
+    const timeline = gsap.timeline({
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: 'top top',
+        end: () => `+=${getTravelDistance() + getHoldDistance() * 2}`,
+        pin: true,
+        pinSpacing: true,
+        anticipatePin: 1,
+        scrub: 1,
+        invalidateOnRefresh: true,
+        refreshPriority: 2,
+      },
+    });
+
+    timeline
+      .to({}, { duration: 0.12 })
+      .to(
+        containerRef.current,
+        {
+          x: () => -getTravelDistance(),
+          duration: 0.76,
+          ease: 'none',
         },
-      });
+        0.12
+      )
+      .to({}, { duration: 0.12 });
 
-      // Animate individual cards as they come into view (if desired)
-      cardsRef.current.forEach((card, i) => {
-        if (!card) return;
-        gsap.fromTo(card,
-          { opacity: 0.5, scale: 0.9 },
-          {
-            opacity: 1,
-            scale: 1,
-            duration: 0.5,
-            scrollTrigger: {
-              trigger: card,
-              containerAnimation: tween,
-              start: 'left 80%',
-              end: 'left 20%',
-              scrub: true,
-            }
-          }
-        );
-      });
+    cardsRef.current.forEach((card) => {
+      if (!card) return;
+      gsap.fromTo(
+        card,
+        { opacity: 0.5, scale: 0.9 },
+        {
+          opacity: 1,
+          scale: 1,
+          scrollTrigger: {
+            trigger: card,
+            containerAnimation: timeline,
+            start: 'left 85%',
+            end: 'center 65%',
+            scrub: true,
+          },
+        }
+      );
+    });
 
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
+    ScrollTrigger.refresh();
+  }, { scope: sectionRef });
 
   return (
-    <section ref={sectionRef} className="h-screen bg-bg-secondary flex flex-col justify-center overflow-hidden relative" id="portfolio">
-      <div className="container-luxury mb-8 shrink-0 relative z-10 w-full pt-16">
+    <section ref={sectionRef} className="relative flex min-h-dvh flex-col justify-center overflow-hidden bg-bg-secondary py-12 md:py-16" id="portfolio">
+      <div className="container-luxury relative z-10 mb-8 w-full shrink-0 md:mb-10">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
           <div>
             <p className="text-xs uppercase tracking-[0.3em] text-gold mb-4">Our Work</p>
@@ -91,12 +100,12 @@ export function PortfolioShowcase() {
 
       {/* Horizontal Scroll Container */}
       <div className="w-full relative flex items-center">
-        <div ref={containerRef} className="flex gap-6 px-[5vw] w-max items-center h-[50vh] md:h-[60vh]">
+        <div ref={containerRef} className="flex h-[52dvh] w-max items-center gap-4 px-[6vw] will-change-transform sm:gap-6 md:h-[58dvh]">
           {PORTFOLIO_ITEMS.map((item, i) => (
             <div
               key={item.id}
               ref={(el) => { if (el) cardsRef.current[i] = el; }}
-              className="relative rounded-2xl overflow-hidden group cursor-pointer h-full w-[70vw] sm:w-[50vw] md:w-[35vw] lg:w-[25vw] shrink-0"
+              className="group relative h-full w-[78vw] shrink-0 cursor-pointer overflow-hidden rounded-2xl sm:w-[52vw] md:w-[36vw] lg:w-[26vw]"
             >
               <Image
                 src={item.src}
@@ -105,15 +114,14 @@ export function PortfolioShowcase() {
                 className="object-cover transition-transform duration-700 group-hover:scale-105"
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-90 transition-opacity duration-500" />
-              <div className="absolute bottom-0 left-0 right-0 p-8 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent opacity-80 transition-opacity duration-500 md:opacity-60 md:group-hover:opacity-90" />
+              <div className="absolute bottom-0 left-0 right-0 p-6 opacity-100 transition-all duration-500 md:translate-y-4 md:p-8 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100">
                 <p className="text-xs uppercase tracking-[0.2em] text-gold mb-2">{item.category}</p>
                 <h3 className="font-heading text-2xl text-text-primary">{item.title}</h3>
               </div>
             </div>
           ))}
-          {/* Extra spacing at the end so the last item isn't flush with the screen edge */}
-          <div className="w-[5vw] shrink-0" />
+          <div className="w-[6vw] shrink-0" aria-hidden="true" />
         </div>
       </div>
     </section>

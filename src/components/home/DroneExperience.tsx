@@ -4,92 +4,154 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const TOTAL_FRAMES = 240;
 const FRAME_PATH = '/sequences/drone_hover';
+const TEXT_REVEAL_DURATION = 24;
+const FINAL_HOLD_DURATION = 72;
+const PIXELS_PER_TIMELINE_UNIT = 18;
 
 export function DroneExperience() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const [loaded, setLoaded] = useState(false);
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const frameRef = useRef({ value: 0 });
+  const lastFrameRef = useRef(-1);
 
   useEffect(() => {
     const images: HTMLImageElement[] = [];
-    let count = 0;
-    const step = 3; // Load every 3rd frame for performance
+    let settledCount = 0;
+    let isCancelled = false;
 
-    for (let i = 0; i < TOTAL_FRAMES; i += step) {
+    const markSettled = () => {
+      settledCount += 1;
+      if (!isCancelled && settledCount === TOTAL_FRAMES) {
+        setLoaded(true);
+      }
+    };
+
+    for (let i = 0; i < TOTAL_FRAMES; i += 1) {
       const img = new window.Image();
       img.src = `${FRAME_PATH}/frame_${String(i).padStart(6, '0')}.png`;
-      img.onload = () => {
-        count++;
-        if (count >= 20) setLoaded(true);
-      };
+      img.onload = markSettled;
+      img.onerror = markSettled;
       images[i] = img;
     }
 
-    for (let i = 0; i < TOTAL_FRAMES; i++) {
-      if (!images[i]) {
-        images[i] = images[Math.floor(i / step) * step];
-      }
-    }
-
     imagesRef.current = images;
+
+    return () => {
+      isCancelled = true;
+      images.forEach((img) => {
+        img.onload = null;
+        img.onerror = null;
+      });
+    };
   }, []);
 
-  useEffect(() => {
-    if (!loaded || !canvasRef.current || !sectionRef.current) return;
+  useGSAP(() => {
+    if (!loaded || !canvasRef.current || !contentRef.current || !sectionRef.current) return;
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    const resizeCanvas = () => {
+      const dpr = window.devicePixelRatio || 1;
+
+      canvas.width = canvas.offsetWidth * dpr;
+      canvas.height = canvas.offsetHeight * dpr;
+
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+
     const draw = () => {
       const currentIndex = Math.round(frameRef.current.value);
-      const img = imagesRef.current[currentIndex];
-      if (!img?.complete) return;
-      canvas.width = canvas.offsetWidth * window.devicePixelRatio;
-      canvas.height = canvas.offsetHeight * window.devicePixelRatio;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const scale = Math.min(canvas.width / img.width, canvas.height / img.height);
-      const x = (canvas.width - img.width * scale) / 2;
-      const y = (canvas.height - img.height * scale) / 2;
+      const clamped = Math.max(0, Math.min(currentIndex, TOTAL_FRAMES - 1));
+      const img = imagesRef.current[clamped];
+      if (!img?.complete || !img.naturalWidth) return;
+
+      ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
+
+      const scale = Math.min(
+        canvas.offsetWidth / img.width,
+        canvas.offsetHeight / img.height
+      );
+      const x = (canvas.offsetWidth - img.width * scale) / 2;
+      const y = (canvas.offsetHeight - img.height * scale) / 2;
       ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
     };
 
+    resizeCanvas();
     draw();
+    gsap.set(contentRef.current, { autoAlpha: 0, y: 36 });
 
-    const gsapCtx = gsap.context(() => {
-      gsap.to(frameRef.current, {
+    const timeline = gsap.timeline({
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: 'top top',
+        end: () =>
+          `+=${Math.max(
+            window.innerHeight * 5,
+            (TOTAL_FRAMES - 1 + TEXT_REVEAL_DURATION + FINAL_HOLD_DURATION) *
+              PIXELS_PER_TIMELINE_UNIT
+          )}`,
+        pin: true,
+        pinSpacing: true,
+        scrub: 1,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+        refreshPriority: 1,
+      },
+    });
+
+    timeline
+      .to(frameRef.current, {
         value: TOTAL_FRAMES - 1,
+        duration: TOTAL_FRAMES - 1,
         ease: 'none',
         snap: { value: 1 },
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top top',
-          end: 'bottom bottom',
-          scrub: true,
-        },
-        onUpdate: draw,
-      });
-    }, sectionRef);
+        onUpdate: () => {
+          const frame = Math.round(frameRef.current.value);
 
-    const onResize = () => draw();
+          if (frame !== lastFrameRef.current) {
+            lastFrameRef.current = frame;
+            draw();
+          }
+        },
+      })
+      .to(contentRef.current, {
+        autoAlpha: 1,
+        y: 0,
+        duration: TEXT_REVEAL_DURATION,
+        ease: 'power2.out',
+      })
+      .to({}, { duration: FINAL_HOLD_DURATION });
+
+    const onResize = () => {
+      resizeCanvas();
+      draw();
+    };
     window.addEventListener('resize', onResize);
 
+    const refreshCanvas = () => draw();
+    ScrollTrigger.addEventListener('refresh', refreshCanvas);
+    ScrollTrigger.refresh();
+
     return () => {
-      gsapCtx.revert();
       window.removeEventListener('resize', onResize);
+      ScrollTrigger.removeEventListener('refresh', refreshCanvas);
     };
-  }, [loaded]);
+  }, { scope: sectionRef, dependencies: [loaded] });
 
   return (
-    <section ref={sectionRef} className="relative h-[250vh] bg-bg-primary" id="drone">
-      <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
+    <section ref={sectionRef} className="relative h-dvh overflow-hidden bg-bg-primary" id="drone">
+      <div className="relative flex h-dvh w-full items-center justify-center overflow-hidden">
         <canvas
           ref={canvasRef}
           className="absolute inset-0 w-full h-full"
@@ -102,8 +164,11 @@ export function DroneExperience() {
         />
 
         {/* Content overlay */}
-        <div className="absolute bottom-0 left-0 right-0 z-10 text-center container-luxury pb-16 md:pb-32 pt-32 bg-gradient-to-t from-bg-primary via-bg-primary/80 to-transparent pointer-events-none flex flex-col items-center">
-          <div className="pointer-events-auto">
+        <div
+          ref={contentRef}
+          className="invisible absolute bottom-0 left-0 right-0 z-10 flex flex-col items-center bg-gradient-to-t from-bg-primary via-bg-primary/80 to-transparent pb-16 pt-32 text-center opacity-0 pointer-events-none md:pb-32"
+        >
+          <div className="container-luxury w-full pointer-events-auto">
             <p className="text-xs uppercase tracking-[0.3em] text-gold mb-4">Aerial Photography</p>
             <h2 className="font-heading text-4xl md:text-6xl lg:text-7xl text-text-primary mb-4">
               Elevated <span className="text-gold-gradient">Perspectives</span>

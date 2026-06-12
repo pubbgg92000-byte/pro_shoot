@@ -1,49 +1,45 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import Image from 'next/image';
 import { TESTIMONIALS } from '@/lib/constants';
 import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
 import { Star, Quote } from 'lucide-react';
-
-gsap.registerPlugin(ScrollTrigger);
 
 export function TestimonialsCarousel() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
+  const tweenRef = useRef<gsap.core.Tween | null>(null);
 
-  useEffect(() => {
+  useGSAP(() => {
     if (!trackRef.current) return;
 
     const track = trackRef.current;
+    const totalWidth = track.scrollWidth / 2; // We duplicated items
 
-    const ctx = gsap.context(() => {
-      // Infinite scroll animation
-      const totalWidth = track.scrollWidth / 2; // We duplicated items
-      gsap.to(track, {
-        x: -totalWidth,
-        duration: 40,
-        ease: 'none',
-        repeat: -1,
-        modifiers: {
-          x: gsap.utils.unitize((x: number) => x % totalWidth),
-        },
-      });
+    // Infinite scroll animation — store reference for pause/resume
+    tweenRef.current = gsap.to(track, {
+      x: -totalWidth,
+      duration: 40,
+      ease: 'none',
+      repeat: -1,
+      modifiers: {
+        x: gsap.utils.unitize((x: number) => x % totalWidth),
+      },
     });
 
-    // Pause on hover
-    const pause = () => gsap.globalTimeline.pause();
-    const resume = () => gsap.globalTimeline.resume();
+    // Pause/resume ONLY this tween on hover (not the global timeline!)
+    const pause = () => tweenRef.current?.pause();
+    const resume = () => tweenRef.current?.resume();
     track.addEventListener('mouseenter', pause);
     track.addEventListener('mouseleave', resume);
 
     return () => {
-      ctx.revert();
       track.removeEventListener('mouseenter', pause);
       track.removeEventListener('mouseleave', resume);
     };
-  }, []);
+  }, { scope: sectionRef });
 
   // Duplicate items for infinite scroll
   const items = [...TESTIMONIALS, ...TESTIMONIALS];

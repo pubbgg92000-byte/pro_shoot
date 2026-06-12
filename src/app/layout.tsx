@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Playfair_Display, Cormorant_Garamond, Inter } from 'next/font/google';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
+import { GSAPProvider } from '@/components/GSAPProvider';
 import './globals.css';
 
 const playfair = Playfair_Display({
@@ -130,7 +131,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${playfair.variable} ${cormorant.variable} ${inter.variable} overflow-x-clip`}
+      className={`${playfair.variable} ${cormorant.variable} ${inter.variable}`}
     >
       <head>
         <link rel="manifest" href="/manifest.webmanifest" />
@@ -140,9 +141,10 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body suppressHydrationWarning className="min-h-screen flex flex-col bg-bg-primary text-text-primary antialiased overflow-x-clip w-full">
+      <body suppressHydrationWarning className="min-h-screen flex flex-col bg-bg-primary text-text-primary antialiased w-full">
+        <GSAPProvider />
         <Navbar />
-        <main className="flex-1 overflow-x-clip">{children}</main>
+        <main className="flex-1">{children}</main>
         <Footer />
       </body>
     </html>

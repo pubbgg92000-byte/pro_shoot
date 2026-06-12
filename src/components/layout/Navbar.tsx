@@ -7,6 +7,7 @@ import { NAV_LINKS, BRAND } from '@/lib/constants';
 import { getWhatsAppUrl } from '@/lib/utils';
 import { Menu, X, ChevronDown, Phone, MessageCircle } from 'lucide-react';
 import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -30,7 +31,7 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  useEffect(() => {
+  useGSAP(() => {
     if (isOpen && mobileMenuRef.current) {
       gsap.fromTo(
         mobileMenuRef.current,
@@ -38,7 +39,7 @@ export function Navbar() {
         { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out' }
       );
     }
-  }, [isOpen]);
+  }, { dependencies: [isOpen] });
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -76,7 +77,7 @@ export function Navbar() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-0.5">
+          <div className="hidden lg:flex items-center gap-0">
             {NAV_LINKS.map((link) => {
               const active = isActive(link.href);
               return (
@@ -92,7 +93,7 @@ export function Navbar() {
                 >
                   <Link
                     href={link.href}
-                    className={`relative px-3.5 py-2 text-sm tracking-wide transition-colors duration-300 flex items-center gap-1 ${
+                    className={`relative px-2.5 xl:px-3.5 py-2 text-[13px] xl:text-sm tracking-wide transition-colors duration-300 flex items-center gap-1 whitespace-nowrap ${
                       active
                         ? 'text-gold font-medium'
                         : 'text-text-secondary hover:text-text-primary'
@@ -166,7 +167,7 @@ export function Navbar() {
             </a>
             <Link
               href="/booking"
-              className="px-6 py-2.5 bg-gold-gradient text-bg-primary text-sm font-semibold rounded-full hover:shadow-lg hover:shadow-gold/20 transition-all duration-300 hover:scale-105"
+              className="px-5 xl:px-6 py-2.5 bg-gold-gradient text-bg-primary text-sm font-semibold rounded-full hover:shadow-lg hover:shadow-gold/20 transition-all duration-300 hover:scale-105 whitespace-nowrap"
             >
               Book Session
             </Link>

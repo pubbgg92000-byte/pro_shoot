@@ -4,11 +4,15 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const TOTAL_FRAMES = 300;
 const FRAME_PATH = '/sequences/dslr_assembly';
+const START_HOLD = 24;
+const END_HOLD = 36;
+const PIXELS_PER_TIMELINE_UNIT = 18;
 
 const TEXT_SLIDES = [
   {
@@ -39,140 +43,184 @@ export function DSLRShowcase() {
   const [imagesLoaded, setImagesLoaded] = useState(false);
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const frameIndexRef = useRef({ value: 0 });
+  const lastFrameRef = useRef(-1);
 
   useEffect(() => {
     const images: HTMLImageElement[] = [];
-    let loadedCount = 0;
+    let settledCount = 0;
+    let isCancelled = false;
 
-    const framesToLoad = Math.min(TOTAL_FRAMES, 150);
-    const step = Math.ceil(TOTAL_FRAMES / framesToLoad);
+    const markSettled = () => {
+      settledCount += 1;
+      if (!isCancelled && settledCount === TOTAL_FRAMES) {
+        setImagesLoaded(true);
+      }
+    };
 
-    for (let i = 0; i < TOTAL_FRAMES; i += step) {
+    for (let i = 0; i < TOTAL_FRAMES; i += 1) {
       const img = new window.Image();
       const frameNum = String(i).padStart(6, '0');
       img.src = `${FRAME_PATH}/frame_${frameNum}.png`;
-      img.onload = () => {
-        loadedCount++;
-        if (loadedCount >= Math.floor(framesToLoad * 0.3)) {
-          setImagesLoaded(true);
-        }
-      };
+      img.onload = markSettled;
+      img.onerror = markSettled;
       images[i] = img;
     }
 
-    for (let i = 0; i < TOTAL_FRAMES; i++) {
-      if (!images[i]) {
-        const prev = Math.floor(i / step) * step;
-        images[i] = images[prev];
-      }
-    }
-
     imagesRef.current = images;
+
+    return () => {
+      isCancelled = true;
+      images.forEach((img) => {
+        img.onload = null;
+        img.onerror = null;
+      });
+    };
   }, []);
 
-  useEffect(() => {
+  useGSAP(() => {
     if (!imagesLoaded || !canvasRef.current || !sectionRef.current) return;
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    const resizeCanvas = () => {
+      const dpr = window.devicePixelRatio || 1;
+
+      canvas.width = canvas.offsetWidth * dpr;
+      canvas.height = canvas.offsetHeight * dpr;
+
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+
     const updateCanvas = () => {
       const currentIndex = Math.round(frameIndexRef.current.value);
-      const img = imagesRef.current[currentIndex];
-      if (!img || !img.complete) return;
+      const clamped = Math.max(0, Math.min(currentIndex, TOTAL_FRAMES - 1));
+      const img = imagesRef.current[clamped];
+      if (!img || !img.complete || !img.naturalWidth) return;
 
-      canvas.width = canvas.offsetWidth * window.devicePixelRatio;
-      canvas.height = canvas.offsetHeight * window.devicePixelRatio;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
 
       const scale = Math.min(
-        canvas.width / img.width,
-        canvas.height / img.height
+        canvas.offsetWidth / img.width,
+        canvas.offsetHeight / img.height
       );
-      const x = (canvas.width - img.width * scale) / 2;
-      const y = (canvas.height - img.height * scale) / 2;
+      const x = (canvas.offsetWidth - img.width * scale) / 2;
+      const y = (canvas.offsetHeight - img.height * scale) / 2;
       ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
     };
 
+    resizeCanvas();
     updateCanvas();
+    gsap.set(textRefs.current, { autoAlpha: 0, y: 30, scale: 0.96 });
 
-    const gsapCtx = gsap.context(() => {
-      // Scrub through frames
-      gsap.to(frameIndexRef.current, {
+    const timeline = gsap.timeline({
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: 'top top',
+        end: () =>
+          `+=${Math.max(
+            window.innerHeight * 5,
+            (START_HOLD + TOTAL_FRAMES - 1 + END_HOLD) * PIXELS_PER_TIMELINE_UNIT
+          )}`,
+        pin: true,
+        pinSpacing: true,
+        scrub: 1,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+        refreshPriority: 3,
+      },
+    });
+
+    timeline
+      .to({}, { duration: START_HOLD })
+      .to(frameIndexRef.current, {
         value: TOTAL_FRAMES - 1,
+        duration: TOTAL_FRAMES - 1,
         ease: 'none',
         snap: { value: 1 },
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top top',
-          end: 'bottom bottom',
-          scrub: true,
-          pin: false,
+        onUpdate: () => {
+          const frame = Math.round(frameIndexRef.current.value);
+
+          if (frame !== lastFrameRef.current) {
+            lastFrameRef.current = frame;
+            updateCanvas();
+          }
         },
-        onUpdate: updateCanvas,
-      });
+      })
+      .to({}, { duration: END_HOLD });
 
-      // Text reveals — each fades IN then fades OUT before the next appears
-      const ranges = [
-        { fadeIn: 0.02, peak: 0.15, fadeOut: 0.30 },
-        { fadeIn: 0.32, peak: 0.45, fadeOut: 0.60 },
-        { fadeIn: 0.62, peak: 0.75, fadeOut: 0.95 },
-      ];
+    const addTextReveal = (
+      index: number,
+      start: number,
+      visibleDuration: number,
+      fadeOut = true
+    ) => {
+      const el = textRefs.current[index];
+      if (!el) return;
 
-      ranges.forEach(({ fadeIn, peak, fadeOut }, i) => {
-        const el = textRefs.current[i];
-        if (!el) return;
-
-        // Fade in
-        gsap.fromTo(
+      timeline
+        .to(
           el,
-          { opacity: 0, y: 30, scale: 0.95 },
           {
-            opacity: 1,
+            autoAlpha: 1,
             y: 0,
             scale: 1,
+            duration: 18,
             ease: 'power2.out',
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: `${fadeIn * 100}% top`,
-              end: `${peak * 100}% top`,
-              scrub: true,
-            },
-          }
-        );
+          },
+          start
+        )
+        .to({}, { duration: visibleDuration }, start + 18);
 
-        // Fade out (except last slide — keep it visible)
-        if (i < ranges.length - 1) {
-          gsap.to(el, {
-            opacity: 0,
-            y: -20,
+      if (fadeOut) {
+        timeline.to(
+          el,
+          {
+            autoAlpha: 0,
+            y: -24,
             scale: 1.02,
+            duration: 18,
             ease: 'power2.in',
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: `${peak * 100}% top`,
-              end: `${fadeOut * 100}% top`,
-              scrub: true,
-            },
-          });
-        }
-      });
-    }, sectionRef);
+          },
+          start + 18 + visibleDuration
+        );
+      }
+    };
 
-    const handleResize = () => updateCanvas();
+    addTextReveal(0, START_HOLD + 8, 48);
+    addTextReveal(1, START_HOLD + 108, 48);
+    addTextReveal(2, START_HOLD + 208, END_HOLD + 46, false);
+
+    const handleResize = () => {
+      resizeCanvas();
+      updateCanvas();
+    };
     window.addEventListener('resize', handleResize);
 
-    return () => {
-      gsapCtx.revert();
-      window.removeEventListener('resize', handleResize);
+    const refreshCanvas = () => {
+      const frame = Math.round(frameIndexRef.current.value);
+      if (frame !== lastFrameRef.current) {
+        lastFrameRef.current = frame;
+      }
+      updateCanvas();
     };
-  }, [imagesLoaded]);
+    ScrollTrigger.addEventListener('refresh', refreshCanvas);
+    ScrollTrigger.refresh();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      ScrollTrigger.removeEventListener('refresh', refreshCanvas);
+    };
+  }, { scope: sectionRef, dependencies: [imagesLoaded] });
 
   return (
-    <section ref={sectionRef} className="relative h-[300vh] bg-bg-primary" id="dslr-showcase">
-      {/* Sticky Canvas Container */}
-      <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
+    <section
+      ref={sectionRef}
+      className="relative h-dvh overflow-hidden bg-bg-primary"
+      id="dslr-showcase"
+    >
+      <div className="relative flex h-dvh w-full items-center justify-center overflow-hidden">
         {/* Canvas */}
         <canvas
           ref={canvasRef}
@@ -185,13 +233,13 @@ export function DSLRShowcase() {
           background: 'radial-gradient(ellipse at center, transparent 50%, rgba(5,5,5,0.6) 100%)',
         }} />
 
-        {/* Text Overlays — positioned absolutely, each fades in/out independently */}
+        {/* Text Overlays */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           {TEXT_SLIDES.map((slide, i) => (
             <div
               key={i}
               ref={(el) => { textRefs.current[i] = el; }}
-              className="absolute inset-0 flex items-center justify-center opacity-0"
+              className="invisible absolute inset-0 flex items-center justify-center opacity-0"
             >
               <div className="text-center container-luxury px-6">
                 {slide.label && (
