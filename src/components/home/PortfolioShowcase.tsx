@@ -99,7 +99,7 @@ export function PortfolioShowcase() {
       </div>
 
       {/* Horizontal Scroll Container */}
-      <div className="w-full relative flex items-center">
+      <div className="relative flex w-full max-w-full items-center overflow-hidden">
         <div ref={containerRef} className="flex h-[52dvh] w-max items-center gap-4 px-[6vw] will-change-transform sm:gap-6 md:h-[58dvh]">
           {PORTFOLIO_ITEMS.map((item, i) => (
             <div

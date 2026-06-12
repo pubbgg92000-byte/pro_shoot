@@ -128,6 +128,7 @@
 
 html {
   scroll-behavior: smooth;
+  width: 100%;
 }
 
 body {
@@ -136,7 +137,14 @@ body {
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: clip;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+img,
+canvas,
+svg {
+  max-width: 100%;
 }
 
 /* Selection */
@@ -238,8 +246,8 @@ body {
   max-width: var(--container-max);
   margin-left: auto;
   margin-right: auto;
-  padding-left: 24px;
-  padding-right: 24px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 @media (min-width: 768px) {

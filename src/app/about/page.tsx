@@ -33,18 +33,26 @@ export default function AboutPage() {
     <>
       <AboutAnimations />
       {/* Hero */}
-      <section data-about-hero className="relative h-[70vh] min-h-[500px] flex items-center justify-center overflow-hidden">
+      <section data-about-hero className="relative flex h-[72svh] min-h-[560px] items-center justify-center overflow-hidden md:h-[70vh] md:min-h-[500px]">
         <div data-about-hero-image className="absolute inset-0 will-change-transform">
-          <Image src="/images/shoot-2.png" alt="Pro Shoot — our story" fill className="object-cover" priority sizes="100vw" />
-          <div className="absolute inset-0 bg-bg-primary/70" />
-          <div className="absolute inset-0 bg-gradient-to-t from-bg-primary via-transparent to-bg-primary/50" />
+          <Image
+            src="/images/shoot-2.png"
+            alt="Pro Shoot — our story"
+            fill
+            className="object-cover object-[45%_center] md:object-center"
+            priority
+            sizes="100vw"
+          />
+          <div className="absolute inset-0 bg-bg-primary/30 md:bg-bg-primary/45" />
+          <div className="absolute inset-0 bg-gradient-to-t from-bg-primary/90 via-bg-primary/5 to-bg-primary/20 md:from-bg-primary md:via-transparent md:to-bg-primary/40" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_46%,rgba(0,0,0,0.24)_100%)]" />
         </div>
-        <div data-about-hero-content className="relative z-10 text-center container-luxury">
-          <p className="text-xs uppercase tracking-[0.3em] text-gold mb-4">Our Story</p>
-          <h1 className="font-heading text-5xl md:text-6xl lg:text-7xl mb-6">
+        <div data-about-hero-content className="relative z-10 container-luxury text-center">
+          <p className="mb-4 text-xs uppercase tracking-[0.3em] text-gold" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.75)' }}>Our Story</p>
+          <h1 className="font-heading mb-6 text-[clamp(3.4rem,13vw,5rem)] md:text-6xl lg:text-7xl" style={{ textShadow: '0 4px 22px rgba(0,0,0,0.72)' }}>
             Behind The <span className="text-gold-gradient">Vision</span>
           </h1>
-          <p className="font-subheading text-xl text-text-secondary max-w-2xl mx-auto">
+          <p className="font-subheading mx-auto max-w-2xl text-xl text-gray-100" style={{ textShadow: '0 2px 14px rgba(0,0,0,0.8)' }}>
             A decade of turning fleeting moments into timeless art
           </p>
         </div>

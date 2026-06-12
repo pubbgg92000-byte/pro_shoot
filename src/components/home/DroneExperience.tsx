@@ -9,7 +9,8 @@ import { useGSAP } from '@gsap/react';
 gsap.registerPlugin(ScrollTrigger);
 
 const TOTAL_FRAMES = 300;
-const FRAME_PATH = '/sequences/drone_hover';
+const DESKTOP_FRAME_PATH = '/sequences/drone_hover';
+const MOBILE_FRAME_PATH = '/sequences/drone_mobile';
 const TEXT_REVEAL_FRAME = 150;
 const TEXT_REVEAL_DURATION = 24;
 const FINAL_HOLD_DURATION = 72;
@@ -28,7 +29,9 @@ export function DroneExperience() {
     const images: HTMLImageElement[] = [];
     let settledCount = 0;
     let isCancelled = false;
-
+    const framePath = window.matchMedia('(max-width: 767px)').matches
+      ? MOBILE_FRAME_PATH
+      : DESKTOP_FRAME_PATH;
     const markSettled = () => {
       settledCount += 1;
       if (!isCancelled && settledCount === TOTAL_FRAMES) {
@@ -38,7 +41,7 @@ export function DroneExperience() {
 
     for (let i = 0; i < TOTAL_FRAMES; i += 1) {
       const img = new window.Image();
-      img.src = `${FRAME_PATH}/frame_${String(i).padStart(6, '0')}.png`;
+      img.src = `${framePath}/frame_${String(i).padStart(6, '0')}.png`;
       img.onload = markSettled;
       img.onerror = markSettled;
       images[i] = img;
@@ -79,10 +82,11 @@ export function DroneExperience() {
 
       ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
 
-      const scale = Math.min(
-        canvas.offsetWidth / img.width,
-        canvas.offsetHeight / img.height
-      );
+      const widthRatio = canvas.offsetWidth / img.width;
+      const heightRatio = canvas.offsetHeight / img.height;
+      const scale = window.innerWidth < 768
+        ? Math.max(widthRatio, heightRatio)
+        : Math.min(widthRatio, heightRatio);
       const x = (canvas.offsetWidth - img.width * scale) / 2;
       const y = (canvas.offsetHeight - img.height * scale) / 2;
       ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
@@ -159,8 +163,8 @@ export function DroneExperience() {
   }, { scope: sectionRef, dependencies: [loaded] });
 
   return (
-    <section ref={sectionRef} className="relative h-dvh overflow-hidden bg-bg-primary" id="drone">
-      <div className="relative flex h-dvh w-full items-center justify-center overflow-hidden">
+    <section ref={sectionRef} className="relative h-[100svh] min-h-[620px] overflow-hidden bg-bg-primary md:h-dvh md:min-h-0" id="drone">
+      <div className="relative flex h-[100svh] min-h-[620px] w-full items-center justify-center overflow-hidden md:h-dvh md:min-h-0">
         <canvas
           ref={canvasRef}
           className="absolute inset-0 w-full h-full"
@@ -169,25 +173,25 @@ export function DroneExperience() {
         {/* Vignette */}
         <div
           className="absolute inset-0 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse at center, transparent 40%, rgba(5,5,5,0.7) 100%)' }}
+          style={{ background: 'radial-gradient(ellipse at center, transparent 50%, rgba(5,5,5,0.6) 100%)' }}
         />
 
         {/* Content overlay */}
         <div
           ref={contentRef}
-          className="invisible absolute bottom-0 left-0 right-0 z-10 flex flex-col items-center bg-gradient-to-t from-bg-primary via-bg-primary/80 to-transparent pb-16 pt-32 text-center opacity-0 pointer-events-none md:pb-32"
+          className="pointer-events-none invisible absolute bottom-0 left-0 right-0 z-10 flex flex-col items-center bg-gradient-to-t from-bg-primary via-bg-primary/75 to-transparent pb-10 pt-28 text-center opacity-0 md:pb-32"
         >
-          <div className="container-luxury w-full pointer-events-auto">
-            <p className="text-xs uppercase tracking-[0.3em] text-gold mb-4">Aerial Photography</p>
-            <h2 className="font-heading text-4xl md:text-6xl lg:text-7xl text-text-primary mb-4">
+          <div className="container-luxury pointer-events-auto w-full">
+            <p className="mb-3 text-[11px] uppercase tracking-[0.3em] text-gold sm:mb-4 sm:text-xs">Aerial Photography</p>
+            <h2 className="font-heading mb-4 text-4xl text-text-primary sm:text-5xl md:text-6xl lg:text-7xl">
               Elevated <span className="text-gold-gradient">Perspectives</span>
             </h2>
-            <p className="font-subheading text-lg md:text-xl text-text-secondary max-w-lg mx-auto mb-8">
+            <p className="font-subheading mx-auto mb-7 max-w-lg text-lg text-text-secondary md:text-xl">
               Professional aerial photography and cinematography that reveals the grandeur invisible to the human eye
             </p>
             <Link
               href="/services/drone-photography"
-              className="inline-flex items-center gap-2 px-8 py-4 border border-gold/30 rounded-full text-gold text-sm uppercase tracking-wider hover:bg-gold/10 transition-all duration-300"
+              className="inline-flex w-full max-w-[330px] items-center justify-center gap-2 rounded-full border border-gold/30 px-8 py-4 text-sm uppercase tracking-wider text-gold transition-all duration-300 hover:bg-gold/10 sm:w-auto"
             >
               Explore Aerial Services
             </Link>

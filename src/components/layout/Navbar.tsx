@@ -46,7 +46,7 @@ export function Navbar() {
     <nav
       ref={navRef}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled
+        isScrolled || isOpen
           ? 'glass shadow-lg shadow-black/20'
           : 'bg-transparent'
       }`}
@@ -184,9 +184,9 @@ export function Navbar() {
       {isOpen && (
         <div
           ref={mobileMenuRef}
-          className="lg:hidden fixed inset-0 top-16 bg-bg-primary/98 backdrop-blur-xl z-40 overflow-y-auto"
+          className="fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto bg-bg-primary/98 backdrop-blur-xl lg:hidden"
         >
-          <div className="container-luxury py-8 flex flex-col gap-2">
+          <div className="container-luxury flex min-h-[calc(100svh-4rem)] flex-col gap-0 py-5 pb-[max(2rem,env(safe-area-inset-bottom))]">
             {NAV_LINKS.map((link) => {
               const active = isActive(link.href);
               return (
@@ -194,7 +194,7 @@ export function Navbar() {
                   <Link
                     href={link.href}
                     onClick={() => setIsOpen(false)}
-                    className={`block py-4 text-2xl font-heading border-b border-border ${
+                    className={`block border-b border-border py-3 font-heading text-[1.65rem] ${
                       active ? 'text-gold' : 'text-text-primary'
                     }`}
                   >
@@ -202,13 +202,13 @@ export function Navbar() {
                     {active && <span className="inline-block w-2 h-2 rounded-full bg-gold ml-3 mb-1" />}
                   </Link>
                   {'children' in link && link.children && (
-                    <div className="pl-6 py-2 space-y-1">
+                    <div className="space-y-1 py-2 pl-5">
                       {link.children.map((child) => (
                         <Link
                           key={child.href}
                           href={child.href}
                           onClick={() => setIsOpen(false)}
-                          className={`block py-2 text-sm ${
+                          className={`block py-2.5 text-base ${
                             isActive(child.href) ? 'text-gold' : 'text-text-secondary'
                           }`}
                         >
@@ -221,7 +221,7 @@ export function Navbar() {
               );
             })}
 
-            <div className="flex gap-3 mt-8">
+            <div className="mt-6 flex gap-3">
               <a
                 href={getWhatsAppUrl(BRAND.whatsapp)}
                 target="_blank"

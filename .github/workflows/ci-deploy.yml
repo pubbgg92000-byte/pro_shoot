@@ -1,4 +1,5 @@
 name: Build and Deploy
+run-name: ${{ github.event_name == 'workflow_dispatch' && 'Manual production deploy' || format('Build and deploy {0}', github.ref_name) }}
 
 on:
   pull_request:
@@ -6,6 +7,14 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      deploy:
+        description: Deploy production from the selected branch
+        required: true
+        default: production
+        type: choice
+        options:
+          - production
 
 permissions:
   contents: read
@@ -41,7 +50,7 @@ jobs:
 
   deploy:
     name: Deploy to Vercel Production
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
     needs: validate
     runs-on: ubuntu-latest
     timeout-minutes: 30

@@ -34,11 +34,11 @@ export function Footer() {
       <div className="absolute top-0 left-0 right-0 h-px bg-gold-gradient opacity-40" />
 
       {/* Main Footer */}
-      <div className="container-luxury pt-24 pb-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16">
+      <div className="container-luxury pb-10 pt-14 sm:pb-14 sm:pt-20 lg:pb-16 lg:pt-24">
+        <div className="grid grid-cols-1 gap-10 text-center sm:text-left md:grid-cols-2 lg:grid-cols-4 lg:gap-16">
           {/* Brand Column */}
           <div className="lg:col-span-1">
-            <Link href="/" className="group inline-flex items-center gap-3 mb-6">
+            <Link href="/" className="group mb-5 inline-flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-gold-gradient flex items-center justify-center transition-all duration-500 group-hover:rotate-12 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-gold/20">
                 <span className="text-bg-primary font-heading text-lg font-bold">P</span>
               </div>
@@ -46,11 +46,11 @@ export function Footer() {
                 Pro <span className="text-gold-gradient">Shoot</span>
               </span>
             </Link>
-            <p className="text-text-secondary text-sm leading-relaxed mb-6">
+            <p className="mx-auto mb-6 max-w-sm text-sm leading-relaxed text-text-secondary sm:mx-0">
               Premium photography and cinematic storytelling crafted for life&apos;s most meaningful moments.
             </p>
             {/* Social Links */}
-            <div className="flex gap-3">
+            <div className="flex justify-center gap-3 sm:justify-start">
               {[
                 { icon: InstagramIcon, href: BRAND.social.instagram, label: 'Instagram' },
                 { icon: FacebookIcon, href: BRAND.social.facebook, label: 'Facebook' },
@@ -73,15 +73,15 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-heading text-sm uppercase tracking-widest text-gold mb-6">
+            <h4 className="mb-4 font-heading text-sm uppercase tracking-widest text-gold sm:mb-6">
               Navigate
             </h4>
-            <ul className="space-y-3">
+            <ul className="grid grid-cols-2 gap-x-6 gap-y-3 sm:block sm:space-y-3">
               {NAV_LINKS.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-text-secondary text-sm hover:text-gold transition-all duration-300 flex items-center gap-1 group hover:translate-x-1"
+                    className="group flex items-center justify-center gap-1 text-sm text-text-secondary transition-all duration-300 hover:translate-x-1 hover:text-gold sm:justify-start"
                   >
                     {link.label}
                     <ArrowUpRight className="w-3 h-3 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" />
@@ -101,15 +101,15 @@ export function Footer() {
 
           {/* Services */}
           <div>
-            <h4 className="font-heading text-sm uppercase tracking-widest text-gold mb-6">
+            <h4 className="mb-4 font-heading text-sm uppercase tracking-widest text-gold sm:mb-6">
               Services
             </h4>
-            <ul className="space-y-3">
+            <ul className="grid grid-cols-2 gap-x-6 gap-y-3 sm:block sm:space-y-3">
               {featuredServices.map((service) => (
                 <li key={service.slug}>
                   <Link
                     href={`/services/${service.slug}`}
-                    className="text-text-secondary text-sm hover:text-gold transition-all duration-300 flex items-center gap-1 group hover:translate-x-1"
+                    className="group flex items-center justify-center gap-1 text-sm text-text-secondary transition-all duration-300 hover:translate-x-1 hover:text-gold sm:justify-start"
                   >
                     {service.shortTitle}
                     <ArrowUpRight className="w-3 h-3 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" />
@@ -129,7 +129,7 @@ export function Footer() {
 
           {/* Contact */}
           <div>
-            <h4 className="font-heading text-sm uppercase tracking-widest text-gold mb-6">
+            <h4 className="mb-4 font-heading text-sm uppercase tracking-widest text-gold sm:mb-6">
               Get In Touch
             </h4>
             <ul className="space-y-4">
@@ -163,7 +163,7 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <div className="flex items-start gap-3 text-text-secondary text-sm">
+                <div className="flex items-start justify-center gap-3 text-sm text-text-secondary sm:justify-start">
                   <MapPin className="w-4 h-4 mt-0.5 text-gold flex-shrink-0" />
                   <span>{BRAND.address.full}</span>
                 </div>
@@ -175,11 +175,11 @@ export function Footer() {
 
       {/* Bottom Bar */}
       <div className="border-t border-border">
-        <div className="container-luxury py-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-text-muted text-xs">
+        <div className="container-luxury flex flex-col items-center justify-between gap-4 py-6 text-center md:flex-row md:text-left">
+          <p className="text-xs text-text-muted">
             © {currentYear} {BRAND.name} Studios. All rights reserved.
           </p>
-          <div className="flex items-center gap-6 text-xs text-text-muted">
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-text-muted md:justify-end">
             <Link href="/privacy-policy" className="hover:text-gold transition-colors duration-300">
               Privacy Policy
             </Link>

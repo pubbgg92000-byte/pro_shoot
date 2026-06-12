@@ -58,7 +58,7 @@ export default async function ServicePage({ params }: Props) {
       {/* Hero */}
       <section
         data-service-hero
-        className="relative min-h-[60vh] md:min-h-[70vh] flex items-center justify-center overflow-hidden pt-24 pb-16"
+        className="relative flex min-h-[64svh] items-center justify-center overflow-hidden pb-14 pt-24 md:min-h-[70vh] md:pb-16"
       >
         <div className="absolute inset-0">
           <Image
@@ -66,40 +66,40 @@ export default async function ServicePage({ params }: Props) {
             src={service.image}
             alt={service.title}
             fill
-            className="object-cover will-change-transform"
+            className="object-cover object-[58%_center] will-change-transform md:object-center"
             priority
             sizes="100vw"
           />
           {/* Dark base overlay */}
-          <div className="absolute inset-0 bg-black/35" />
+          <div className="absolute inset-0 bg-black/25 md:bg-black/35" />
           {/* Bottom fade for content area */}
-          <div className="absolute inset-0 bg-gradient-to-t from-bg-primary via-bg-primary/20 to-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-bg-primary via-bg-primary/10 to-black/10 md:via-bg-primary/20 md:to-black/20" />
           {/* Vignette edges */}
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(0,0,0,0.28)_100%)]" />
         </div>
         <div data-service-hero-content className="relative z-10 text-center container-luxury">
           <p
-            className="text-xs uppercase tracking-[0.3em] text-gold mb-6"
+            className="mb-5 text-[11px] uppercase tracking-[0.3em] text-gold sm:mb-6 sm:text-xs"
             style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}
           >
             Starting from {service.price}
           </p>
           <h1
-            className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-6 text-white"
+            className="font-heading mb-5 text-[clamp(3rem,13vw,4.25rem)] text-white sm:mb-6 sm:text-5xl md:text-6xl lg:text-7xl"
             style={{ textShadow: '0 4px 20px rgba(0,0,0,0.7)' }}
           >
             {service.title}
           </h1>
           <p
-            className="font-subheading text-lg md:text-xl text-gray-200 max-w-2xl mx-auto mb-10"
+            className="font-subheading mx-auto mb-8 max-w-2xl text-lg text-gray-100 md:text-xl"
             style={{ textShadow: '0 2px 10px rgba(0,0,0,0.6)' }}
           >
             {service.tagline}
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link
               href="/booking"
-              className="px-8 py-4 bg-gold-gradient text-bg-primary font-semibold rounded-full text-sm uppercase tracking-wider hover:shadow-xl hover:shadow-gold/20 transition-all duration-500 hover:scale-105"
+              className="w-full max-w-[300px] rounded-full bg-gold-gradient px-8 py-4 text-sm font-semibold uppercase tracking-wider text-bg-primary transition-all duration-500 hover:scale-105 hover:shadow-xl hover:shadow-gold/20 sm:w-auto"
             >
               Book This Service
             </Link>
@@ -107,7 +107,7 @@ export default async function ServicePage({ params }: Props) {
               href={getWhatsAppUrl(BRAND.whatsapp, `Hi! I'm interested in ${service.title}.`)}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-8 py-4 border border-white/30 rounded-full text-sm uppercase tracking-wider flex items-center gap-2 hover:border-gold/50 hover:text-gold transition-all duration-500 backdrop-blur-sm bg-black/20 text-white"
+              className="flex w-full max-w-[300px] items-center justify-center gap-2 rounded-full border border-white/40 bg-black/20 px-8 py-4 text-sm uppercase tracking-wider text-white backdrop-blur-sm transition-all duration-500 hover:border-gold/50 hover:text-gold sm:w-auto"
             >
               <MessageCircle className="w-4 h-4" /> WhatsApp
             </a>

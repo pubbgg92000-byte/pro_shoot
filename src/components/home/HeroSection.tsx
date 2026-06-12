@@ -95,7 +95,7 @@ export function HeroSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden"
+      className="relative flex h-[100svh] min-h-[640px] items-center justify-center overflow-hidden sm:h-screen sm:min-h-[700px]"
       id="hero"
     >
       {/* Background Image */}
@@ -104,7 +104,7 @@ export function HeroSection() {
           src="/images/shoot-3.png"
           alt="Luxury wedding photography — bride at ceremony with golden confetti"
           fill
-          className="object-cover"
+          className="object-cover object-[58%_center] md:object-center"
           priority
           sizes="100vw"
           quality={90}
@@ -113,10 +113,10 @@ export function HeroSection() {
 
       {/* Gradient Overlays */}
       <div ref={overlayRef} className="absolute inset-0 opacity-0">
-        <div className="absolute inset-0 bg-black/60" />
-        <div className="absolute inset-0 bg-gradient-to-b from-bg-primary/80 via-transparent to-bg-primary" />
-        <div className="absolute inset-0 bg-gradient-to-r from-bg-primary/40 via-transparent to-bg-primary/40" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(0,0,0,0.4)_100%)]" />
+        <div className="absolute inset-0 bg-black/35 md:bg-black/45" />
+        <div className="absolute inset-0 bg-gradient-to-b from-bg-primary/45 via-transparent to-bg-primary/85 md:from-bg-primary/65" />
+        <div className="absolute inset-0 bg-gradient-to-r from-bg-primary/25 via-transparent to-bg-primary/20 md:from-bg-primary/35 md:to-bg-primary/35" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_36%,rgba(0,0,0,0.3)_100%)]" />
       </div>
 
       {/* Floating Gold Particles */}
@@ -136,11 +136,11 @@ export function HeroSection() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 text-center container-luxury px-6">
+      <div className="relative z-10 container-luxury px-5 pt-12 text-center sm:px-6">
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gold/30 bg-black/30 backdrop-blur-sm mb-8">
+        <div className="mb-7 inline-flex max-w-[calc(100vw-48px)] items-center gap-2 rounded-full border border-gold/30 bg-black/30 px-4 py-2 backdrop-blur-sm sm:mb-8">
           <div className="w-1.5 h-1.5 rounded-full bg-gold animate-pulse-gold" />
-          <span className="text-xs uppercase tracking-[0.2em] text-gold font-medium">
+          <span className="text-[10px] uppercase tracking-[0.2em] text-gold font-medium sm:text-xs">
             Premium Photography Studio
           </span>
         </div>
@@ -148,7 +148,7 @@ export function HeroSection() {
         {/* Heading */}
         <h1
           ref={headingRef}
-          className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl mb-8"
+          className="font-heading mb-8 text-[clamp(2.85rem,12vw,4.25rem)] sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl"
           style={{ perspective: '1000px', textShadow: '0 4px 24px rgba(0,0,0,0.6)' }}
         >
           <span className="hero-line block overflow-hidden leading-tight">
@@ -165,23 +165,23 @@ export function HeroSection() {
         {/* Subheading */}
         <p
           ref={subRef}
-          className="font-subheading text-base sm:text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-10 opacity-0"
+          className="font-subheading mx-auto mb-9 max-w-2xl text-base text-gray-200 opacity-0 sm:text-lg md:text-xl"
           style={{ textShadow: '0 2px 12px rgba(0,0,0,0.5)' }}
         >
           Premium photography and cinematic storytelling crafted for life&apos;s most meaningful moments.
         </p>
 
         {/* CTAs */}
-        <div ref={ctaRef} className="flex flex-col sm:flex-row items-center justify-center gap-4 opacity-0">
+        <div ref={ctaRef} className="flex flex-col items-center justify-center gap-4 opacity-0 sm:flex-row">
           <Link
             href="/booking"
-            className="px-8 py-4 bg-gold-gradient text-bg-primary font-semibold rounded-full text-sm uppercase tracking-wider hover:shadow-xl hover:shadow-gold/20 transition-all duration-500 hover:scale-105 gold-shine"
+            className="gold-shine w-full max-w-[290px] rounded-full bg-gold-gradient px-8 py-4 text-sm font-semibold uppercase tracking-wider text-bg-primary transition-all duration-500 hover:scale-105 hover:shadow-xl hover:shadow-gold/20 sm:w-auto"
           >
             Book a Session
           </Link>
           <Link
             href="/portfolio"
-            className="px-8 py-4 border border-white/30 rounded-full text-sm uppercase tracking-wider text-white hover:border-gold/50 hover:text-gold transition-all duration-500 backdrop-blur-sm bg-black/20"
+            className="w-full max-w-[290px] rounded-full border border-white/40 bg-black/20 px-8 py-4 text-sm uppercase tracking-wider text-white backdrop-blur-sm transition-all duration-500 hover:border-gold/50 hover:text-gold sm:w-auto"
           >
             Explore Portfolio
           </Link>
@@ -191,7 +191,7 @@ export function HeroSection() {
       {/* Scroll Indicator */}
       <div
         ref={scrollRef}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-0 z-10"
+        className="absolute bottom-[max(1.25rem,env(safe-area-inset-bottom))] left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2 opacity-0 sm:bottom-8"
       >
         <span className="text-[10px] uppercase tracking-[0.3em] text-gray-400">Scroll</span>
         <ChevronDown className="w-4 h-4 text-gold animate-scroll-indicator" />

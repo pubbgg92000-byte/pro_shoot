@@ -13,18 +13,18 @@ export default function ServicesPage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative h-[60vh] min-h-[400px] flex items-center justify-center overflow-hidden">
+      <section className="relative flex h-[58svh] min-h-[420px] items-center justify-center overflow-hidden md:h-[60vh]">
         <div className="absolute inset-0">
-          <Image src="/images/shoot-3.png" alt="Pro Shoot services" fill className="object-cover" priority sizes="100vw" />
-          <div className="absolute inset-0 bg-bg-primary/70" />
-          <div className="absolute inset-0 bg-gradient-to-t from-bg-primary via-transparent to-bg-primary/50" />
+          <Image src="/images/shoot-3.png" alt="Pro Shoot services" fill className="object-cover object-[58%_center] md:object-center" priority sizes="100vw" />
+          <div className="absolute inset-0 bg-bg-primary/45 md:bg-bg-primary/55" />
+          <div className="absolute inset-0 bg-gradient-to-t from-bg-primary via-transparent to-bg-primary/35" />
         </div>
         <div className="relative z-10 text-center container-luxury">
           <p className="text-xs uppercase tracking-[0.3em] text-gold mb-4">What We Offer</p>
-          <h1 className="font-heading text-5xl md:text-6xl lg:text-7xl mb-6">
+          <h1 className="font-heading mb-6 text-5xl md:text-6xl lg:text-7xl">
             Our <span className="text-gold-gradient">Services</span>
           </h1>
-          <p className="font-subheading text-xl text-text-secondary max-w-2xl mx-auto">
+          <p className="font-subheading mx-auto max-w-2xl text-lg text-text-secondary sm:text-xl">
             Every service is a carefully crafted experience designed to exceed your expectations
           </p>
         </div>
@@ -53,7 +53,7 @@ export default function ServicesPage() {
                 <div className="absolute bottom-0 left-0 right-0 p-6">
                   <p className="text-[10px] uppercase tracking-[0.2em] text-gold mb-1">{service.price}</p>
                   <h3 className="font-heading text-2xl text-text-primary mb-1">{service.title}</h3>
-                  <p className="text-text-secondary text-sm line-clamp-2 mb-3">{service.tagline}</p>
+                  <p className="mb-3 line-clamp-2 text-sm text-text-secondary">{service.tagline}</p>
                   <div className="flex items-center gap-2 text-sm text-text-secondary group-hover:text-gold transition-colors duration-300">
                     <span>Learn More</span>
                     <ArrowUpRight className="w-4 h-4 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300" />

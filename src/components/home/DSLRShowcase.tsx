@@ -9,7 +9,8 @@ import { useGSAP } from '@gsap/react';
 gsap.registerPlugin(ScrollTrigger);
 
 const TOTAL_FRAMES = 300;
-const FRAME_PATH = '/sequences/dslr_assembly';
+const DESKTOP_FRAME_PATH = '/sequences/dslr_assembly';
+const MOBILE_FRAME_PATH = '/sequences/dslr_mobile';
 const START_HOLD = 24;
 const END_HOLD = 36;
 const PIXELS_PER_TIMELINE_UNIT = 18;
@@ -49,7 +50,9 @@ export function DSLRShowcase() {
     const images: HTMLImageElement[] = [];
     let settledCount = 0;
     let isCancelled = false;
-
+    const framePath = window.matchMedia('(max-width: 767px)').matches
+      ? MOBILE_FRAME_PATH
+      : DESKTOP_FRAME_PATH;
     const markSettled = () => {
       settledCount += 1;
       if (!isCancelled && settledCount === TOTAL_FRAMES) {
@@ -60,7 +63,7 @@ export function DSLRShowcase() {
     for (let i = 0; i < TOTAL_FRAMES; i += 1) {
       const img = new window.Image();
       const frameNum = String(i).padStart(6, '0');
-      img.src = `${FRAME_PATH}/frame_${frameNum}.png`;
+      img.src = `${framePath}/frame_${frameNum}.png`;
       img.onload = markSettled;
       img.onerror = markSettled;
       images[i] = img;
@@ -101,10 +104,11 @@ export function DSLRShowcase() {
 
       ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
 
-      const scale = Math.min(
-        canvas.offsetWidth / img.width,
-        canvas.offsetHeight / img.height
-      );
+      const widthRatio = canvas.offsetWidth / img.width;
+      const heightRatio = canvas.offsetHeight / img.height;
+      const scale = window.innerWidth < 768
+        ? Math.max(widthRatio, heightRatio)
+        : Math.min(widthRatio, heightRatio);
       const x = (canvas.offsetWidth - img.width * scale) / 2;
       const y = (canvas.offsetHeight - img.height * scale) / 2;
       ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
@@ -217,10 +221,10 @@ export function DSLRShowcase() {
   return (
     <section
       ref={sectionRef}
-      className="relative h-dvh overflow-hidden bg-bg-primary"
+      className="relative h-[100svh] min-h-[620px] overflow-hidden bg-bg-primary md:h-dvh md:min-h-0"
       id="dslr-showcase"
     >
-      <div className="relative flex h-dvh w-full items-center justify-center overflow-hidden">
+      <div className="relative flex h-[100svh] min-h-[620px] w-full items-center justify-center overflow-hidden md:h-dvh md:min-h-0">
         {/* Canvas */}
         <canvas
           ref={canvasRef}
@@ -230,7 +234,7 @@ export function DSLRShowcase() {
 
         {/* Subtle vignette overlay */}
         <div className="absolute inset-0 pointer-events-none" style={{
-          background: 'radial-gradient(ellipse at center, transparent 50%, rgba(5,5,5,0.6) 100%)',
+          background: 'radial-gradient(ellipse at center, transparent 55%, rgba(5,5,5,0.55) 100%)',
         }} />
 
         {/* Text Overlays */}
@@ -241,7 +245,7 @@ export function DSLRShowcase() {
               ref={(el) => { textRefs.current[i] = el; }}
               className="invisible absolute inset-0 flex items-center justify-center opacity-0"
             >
-              <div className="text-center container-luxury px-6">
+              <div className="container-luxury px-5 text-center sm:px-6">
                 {slide.label && (
                   <p className="text-xs uppercase tracking-[0.3em] text-gold mb-4"
                     style={{ textShadow: '0 2px 12px rgba(0,0,0,0.8)' }}>
@@ -249,7 +253,7 @@ export function DSLRShowcase() {
                   </p>
                 )}
                 <h2
-                  className={`font-heading text-4xl md:text-6xl lg:text-7xl ${slide.headingClass}`}
+                  className={`font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl ${slide.headingClass}`}
                   style={{ textShadow: '0 4px 24px rgba(0,0,0,0.6)' }}
                 >
                   {slide.heading}
@@ -263,7 +267,7 @@ export function DSLRShowcase() {
                 {slide.cta && (
                   <Link
                     href={slide.cta.href}
-                    className="pointer-events-auto inline-flex items-center gap-2 mt-8 px-8 py-4 border border-gold/30 rounded-full text-gold text-sm uppercase tracking-wider hover:bg-gold/10 transition-all duration-300"
+                    className="pointer-events-auto mt-8 inline-flex w-full max-w-[290px] items-center justify-center gap-2 rounded-full border border-gold/30 px-8 py-4 text-sm uppercase tracking-wider text-gold transition-all duration-300 hover:bg-gold/10 sm:w-auto"
                   >
                     {slide.cta.label} →
                   </Link>
