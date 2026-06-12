@@ -1,0 +1,16 @@
+{
+  "name": "Pro Shoot Studios",
+  "short_name": "Pro Shoot",
+  "description": "Premium photography and cinematic storytelling crafted for life's most meaningful moments.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A0A0C",
+  "theme_color": "#C9A96E",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    }
+  ]
+}
