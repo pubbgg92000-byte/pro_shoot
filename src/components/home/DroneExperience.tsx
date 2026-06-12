@@ -115,18 +115,18 @@ export function DroneExperience() {
       .to(
         frameRef.current,
         {
-        value: TOTAL_FRAMES - 1,
-        duration: TOTAL_FRAMES - 1,
-        ease: 'none',
-        snap: { value: 1 },
-        onUpdate: () => {
-          const frame = Math.round(frameRef.current.value);
+          value: TOTAL_FRAMES - 1,
+          duration: TOTAL_FRAMES - 1,
+          ease: 'none',
+          snap: { value: 1 },
+          onUpdate: () => {
+            const frame = Math.round(frameRef.current.value);
 
-          if (frame !== lastFrameRef.current) {
-            lastFrameRef.current = frame;
-            draw();
-          }
-        },
+            if (frame !== lastFrameRef.current) {
+              lastFrameRef.current = frame;
+              draw();
+            }
+          },
         },
         0
       )

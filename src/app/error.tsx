@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 export default function Error({
   error,
@@ -9,10 +9,9 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  const [errorMessage, setErrorMessage] = useState('');
+  const errorMessage = error.message || 'An unexpected error occurred';
 
   useEffect(() => {
-    setErrorMessage(error.message || 'An unexpected error occurred');
     console.error('App error:', error);
   }, [error]);
 

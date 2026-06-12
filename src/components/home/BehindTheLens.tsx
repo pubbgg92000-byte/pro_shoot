@@ -20,8 +20,8 @@ export function BehindTheLens() {
     const timeline = gsap.timeline({
       scrollTrigger: {
         trigger: sectionRef.current,
-        start: 'top 85%',
-        end: 'top 35%',
+        start: 'top 50%',
+        end: 'top 10%',
         scrub: 1,
         invalidateOnRefresh: true,
       },

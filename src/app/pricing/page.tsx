@@ -55,32 +55,41 @@ export default function PricingPage() {
       {/* Tiers */}
       <section className="section-padding bg-bg-primary">
         <div className="container-luxury">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto items-stretch">
             {TIERS.map((tier) => (
               <div
                 key={tier.name}
-                className={`rounded-2xl p-8 relative ${
+                tabIndex={0}
+                className={`group rounded-2xl p-8 relative h-full flex flex-col outline-none transition-all duration-500 hover:-translate-y-3 focus-visible:-translate-y-3 ${
                   tier.popular
-                    ? 'border-2 border-gold bg-bg-card scale-105'
-                    : 'border border-border bg-bg-card hover:border-border-gold transition-colors duration-300'
+                    ? 'border-2 border-gold bg-bg-card shadow-[0_0_45px_rgba(212,175,55,0.12)] hover:shadow-[0_22px_70px_rgba(212,175,55,0.24)] focus-visible:shadow-[0_22px_70px_rgba(212,175,55,0.24)]'
+                    : 'border border-border bg-bg-card hover:border-gold/60 hover:shadow-[0_22px_65px_rgba(0,0,0,0.45)] focus-visible:border-gold/60 focus-visible:shadow-[0_22px_65px_rgba(0,0,0,0.45)]'
                 }`}
               >
+                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/70 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100" />
+                <div className="absolute -right-24 -top-24 h-48 w-48 rounded-full bg-gold/10 blur-3xl opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100" />
+
                 {tier.popular && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gold-gradient rounded-full text-bg-primary text-xs font-semibold uppercase tracking-wider">
                     Most Popular
                   </div>
                 )}
 
-                <div className="text-center mb-8">
+                <div className="relative text-center mb-8 min-h-36">
                   <p className="text-xs uppercase tracking-[0.2em] text-gold mb-2">{tier.tagline}</p>
-                  <h3 className="font-heading text-3xl mb-3">{tier.name}</h3>
+                  <h3 className="font-heading text-3xl mb-3 transition-colors duration-300 group-hover:text-gold group-focus-visible:text-gold">
+                    {tier.name}
+                  </h3>
                   <p className="text-text-secondary text-sm">{tier.description}</p>
                 </div>
 
-                <ul className="space-y-3 mb-8">
+                <ul className="relative space-y-3 mb-8 flex-1">
                   {tier.features.map((f) => (
-                    <li key={f} className="flex items-start gap-3">
-                      <Check className="w-4 h-4 text-gold flex-shrink-0 mt-0.5" />
+                    <li
+                      key={f}
+                      className="flex items-start gap-3 transition-transform duration-300 hover:translate-x-1"
+                    >
+                      <Check className="w-4 h-4 text-gold flex-shrink-0 mt-0.5 transition-transform duration-300 group-hover:scale-110" />
                       <span className="text-text-secondary text-sm">{f}</span>
                     </li>
                   ))}
@@ -88,10 +97,10 @@ export default function PricingPage() {
 
                 <Link
                   href="/booking"
-                  className={`block text-center py-4 rounded-full text-sm uppercase tracking-wider font-semibold transition-all duration-300 ${
+                  className={`relative mt-auto block text-center py-4 rounded-full text-sm uppercase tracking-wider font-semibold transition-all duration-300 hover:scale-[1.03] focus-visible:scale-[1.03] ${
                     tier.popular
-                      ? 'bg-gold-gradient text-bg-primary hover:shadow-xl hover:shadow-gold/20'
-                      : 'border border-gold/30 text-gold hover:bg-gold/5'
+                      ? 'bg-gold-gradient text-bg-primary hover:shadow-xl hover:shadow-gold/30'
+                      : 'border border-gold/30 text-gold hover:bg-gold/10 hover:border-gold/70'
                   }`}
                 >
                   {tier.cta}

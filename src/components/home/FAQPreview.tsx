@@ -27,7 +27,19 @@ export function FAQPreview() {
           {questions.map((item, i) => (
             <div
               key={i}
-              className="border border-border rounded-xl overflow-hidden transition-colors duration-300 hover:border-border-gold"
+              onMouseEnter={() => setOpenIndex(i)}
+              onMouseLeave={() => setOpenIndex(null)}
+              onFocus={() => setOpenIndex(i)}
+              onBlur={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget)) {
+                  setOpenIndex(null);
+                }
+              }}
+              className={`border rounded-xl overflow-hidden transition-all duration-300 ${
+                openIndex === i
+                  ? 'border-border-gold bg-gold/5'
+                  : 'border-border hover:border-border-gold'
+              }`}
             >
               <button
                 onClick={() => setOpenIndex(openIndex === i ? null : i)}

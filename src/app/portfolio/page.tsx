@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { Search, X, Share2, Maximize2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, X, Maximize2, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const CATEGORIES = ['All', 'Wedding', 'Pre-Wedding', 'Baby', 'Events', 'Corporate', 'Fashion', 'Drone'];
 
@@ -19,6 +19,14 @@ const PORTFOLIO_ITEMS = [
   { id: 10, src: '/images/shoot-3.png', title: 'Timeless Grace', category: 'Wedding', location: 'Mumbai' },
   { id: 11, src: '/images/baby-shoot-1.png', title: 'Sweet Dreams', category: 'Baby', location: 'Studio' },
   { id: 12, src: '/images/shoot-2.png', title: 'Garden Romance', category: 'Pre-Wedding', location: 'Ooty' },
+  { id: 13, src: '/generated/event-1.png', title: 'A Night to Remember', category: 'Events', location: 'Bangalore' },
+  { id: 14, src: '/generated/video-1.png', title: 'Celebration in Motion', category: 'Events', location: 'Chennai' },
+  { id: 15, src: '/generated/corporate-1.png', title: 'Executive Presence', category: 'Corporate', location: 'Bangalore' },
+  { id: 16, src: '/generated/product-1.png', title: 'Brand Story', category: 'Corporate', location: 'Studio' },
+  { id: 17, src: '/generated/fashion-1.png', title: 'Editorial Elegance', category: 'Fashion', location: 'Mumbai' },
+  { id: 18, src: '/generated/portfolio-fashion.png', title: 'Modern Muse', category: 'Fashion', location: 'Studio' },
+  { id: 19, src: '/generated/drone-rental.png', title: 'Flight Ready', category: 'Drone', location: 'Bangalore' },
+  { id: 20, src: '/sequences/drone_hover/frame_000210.png', title: 'Above the Horizon', category: 'Drone', location: 'Coorg' },
 ];
 
 export default function PortfolioPage() {

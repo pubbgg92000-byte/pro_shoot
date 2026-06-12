@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { NAV_LINKS, BRAND } from '@/lib/constants';
 import { getWhatsAppUrl } from '@/lib/utils';
-import { Menu, X, ChevronDown, Phone, MessageCircle } from 'lucide-react';
+import { WhatsAppIcon } from '@/components/icons/WhatsAppIcon';
+import { Menu, X, ChevronDown, Phone } from 'lucide-react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 
@@ -40,11 +41,6 @@ export function Navbar() {
       );
     }
   }, { dependencies: [isOpen] });
-
-  // Close mobile menu on route change
-  useEffect(() => {
-    setIsOpen(false);
-  }, [pathname]);
 
   return (
     <nav
@@ -153,10 +149,10 @@ export function Navbar() {
               href={getWhatsAppUrl(BRAND.whatsapp, 'Hi, I\'d like to inquire about your photography services.')}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2.5 rounded-full border border-border hover:border-gold/50 text-text-secondary hover:text-gold transition-all duration-300"
+              className="group p-2.5 rounded-full border border-border hover:border-[#25D366]/60 hover:bg-[#25D366]/10 text-text-secondary hover:text-[#25D366] transition-all duration-300"
               aria-label="WhatsApp"
             >
-              <MessageCircle className="w-4 h-4" />
+              <WhatsAppIcon className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
             </a>
             <a
               href={`tel:${BRAND.phone.replace(/\s/g, '')}`}

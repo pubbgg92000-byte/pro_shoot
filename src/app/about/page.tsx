@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { BRAND } from '@/lib/constants';
 import { Award, Target, Eye, Gem, Users, Star } from 'lucide-react';
+import { AboutAnimations } from '@/components/about/AboutAnimations';
 
 export const metadata: Metadata = {
   title: 'About Us',
@@ -30,14 +31,15 @@ const VALUES = [
 export default function AboutPage() {
   return (
     <>
+      <AboutAnimations />
       {/* Hero */}
-      <section className="relative h-[70vh] min-h-[500px] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0">
+      <section data-about-hero className="relative h-[70vh] min-h-[500px] flex items-center justify-center overflow-hidden">
+        <div data-about-hero-image className="absolute inset-0 will-change-transform">
           <Image src="/images/shoot-2.png" alt="Pro Shoot — our story" fill className="object-cover" priority sizes="100vw" />
           <div className="absolute inset-0 bg-bg-primary/70" />
           <div className="absolute inset-0 bg-gradient-to-t from-bg-primary via-transparent to-bg-primary/50" />
         </div>
-        <div className="relative z-10 text-center container-luxury">
+        <div data-about-hero-content className="relative z-10 text-center container-luxury">
           <p className="text-xs uppercase tracking-[0.3em] text-gold mb-4">Our Story</p>
           <h1 className="font-heading text-5xl md:text-6xl lg:text-7xl mb-6">
             Behind The <span className="text-gold-gradient">Vision</span>
@@ -52,7 +54,7 @@ export default function AboutPage() {
       <section className="section-padding bg-bg-primary">
         <div className="container-luxury max-w-4xl">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
-            <div>
+            <div data-about-reveal>
               <p className="text-xs uppercase tracking-[0.3em] text-gold mb-4">Our Mission</p>
               <h2 className="font-heading text-3xl md:text-4xl mb-6">
                 Crafting Visual <span className="text-gold-gradient">Legacies</span>
@@ -63,7 +65,7 @@ export default function AboutPage() {
                 connection, we create photography that becomes family heritage.
               </p>
             </div>
-            <div>
+            <div data-about-reveal>
               <p className="text-xs uppercase tracking-[0.3em] text-gold mb-4">Our Vision</p>
               <h2 className="font-heading text-3xl md:text-4xl mb-6">
                 Redefining <span className="text-gold-gradient">Premium</span>
@@ -79,9 +81,9 @@ export default function AboutPage() {
       </section>
 
       {/* Timeline */}
-      <section className="section-padding bg-bg-secondary">
+      <section data-timeline-section className="section-padding bg-bg-secondary overflow-hidden">
         <div className="container-luxury max-w-4xl">
-          <div className="text-center mb-20">
+          <div data-about-reveal className="text-center mb-20">
             <p className="text-xs uppercase tracking-[0.3em] text-gold mb-4">Our Journey</p>
             <h2 className="font-heading text-4xl md:text-5xl">
               A Decade of <span className="text-gold-gradient">Growth</span>
@@ -90,11 +92,11 @@ export default function AboutPage() {
 
           <div className="relative">
             {/* Center line */}
-            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-gold/30 to-transparent hidden md:block" />
+            <div data-timeline-line className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-gold/30 to-transparent hidden md:block" />
 
             <div className="space-y-16">
               {TIMELINE.map((item, i) => (
-                <div key={item.year} className={`flex items-center gap-8 ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
+                <div data-timeline-item key={item.year} className={`flex items-center gap-8 will-change-transform ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
                   <div className={`flex-1 ${i % 2 === 0 ? 'md:text-right' : 'md:text-left'}`}>
                     <span className="font-heading text-3xl text-gold">{item.year}</span>
                     <h3 className="font-heading text-xl mt-2 mb-2">{item.title}</h3>
@@ -112,7 +114,7 @@ export default function AboutPage() {
       {/* Values */}
       <section className="section-padding bg-bg-primary">
         <div className="container-luxury">
-          <div className="text-center mb-20">
+          <div data-about-reveal className="text-center mb-20">
             <p className="text-xs uppercase tracking-[0.3em] text-gold mb-4">What Drives Us</p>
             <h2 className="font-heading text-4xl md:text-5xl">
               Our <span className="text-gold-gradient">Values</span>
@@ -123,8 +125,8 @@ export default function AboutPage() {
             {VALUES.map((val) => {
               const Icon = val.icon;
               return (
-                <div key={val.title} className="glass-light rounded-2xl p-8 hover-lift group text-center">
-                  <Icon className="w-8 h-8 text-gold mx-auto mb-4 group-hover:scale-110 transition-transform duration-300" />
+                <div data-value-card key={val.title} className="glass-light rounded-2xl p-8 hover-lift group text-center will-change-transform hover:border-gold/30">
+                  <Icon className="w-8 h-8 text-gold mx-auto mb-4 group-hover:scale-125 group-hover:rotate-6 transition-transform duration-500" />
                   <h3 className="font-heading text-xl mb-3">{val.title}</h3>
                   <p className="text-text-secondary text-sm leading-relaxed">{val.desc}</p>
                 </div>
@@ -135,12 +137,13 @@ export default function AboutPage() {
       </section>
 
       {/* CTA */}
-      <section className="relative py-32 overflow-hidden">
-        <div className="absolute inset-0">
+      <section data-about-cta className="relative py-32 overflow-hidden">
+        <div data-about-cta-image className="absolute inset-0 will-change-transform">
           <Image src="/images/shoot-3.png" alt="" fill className="object-cover" sizes="100vw" aria-hidden="true" />
-          <div className="absolute inset-0 bg-bg-primary/80" />
+          <div className="absolute inset-0 bg-bg-primary/55" />
+          <div className="absolute inset-0 bg-gradient-to-r from-bg-primary/45 via-transparent to-bg-primary/35" />
         </div>
-        <div className="relative z-10 container-luxury text-center">
+        <div data-about-cta-content className="relative z-10 container-luxury text-center">
           <h2 className="font-heading text-4xl md:text-5xl mb-6">
             Let&apos;s Create Something <span className="text-gold-gradient">Beautiful</span>
           </h2>

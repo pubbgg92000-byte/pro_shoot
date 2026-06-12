@@ -38,11 +38,11 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16">
           {/* Brand Column */}
           <div className="lg:col-span-1">
-            <Link href="/" className="inline-flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-full bg-gold-gradient flex items-center justify-center">
+            <Link href="/" className="group inline-flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-full bg-gold-gradient flex items-center justify-center transition-all duration-500 group-hover:rotate-12 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-gold/20">
                 <span className="text-bg-primary font-heading text-lg font-bold">P</span>
               </div>
-              <span className="font-heading text-xl tracking-tight">
+              <span className="font-heading text-xl tracking-tight transition-transform duration-300 group-hover:translate-x-1">
                 Pro <span className="text-gold-gradient">Shoot</span>
               </span>
             </Link>
@@ -62,10 +62,10 @@ export function Footer() {
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-text-muted hover:text-gold hover:border-gold/50 transition-all duration-300"
+                  className="group w-10 h-10 rounded-full border border-border flex items-center justify-center text-text-muted hover:text-gold hover:border-gold/50 hover:-translate-y-1 hover:scale-110 hover:bg-gold/10 hover:shadow-lg hover:shadow-gold/10 transition-all duration-300"
                   aria-label={label}
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
                 </a>
               ))}
             </div>
@@ -81,7 +81,7 @@ export function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-text-secondary text-sm hover:text-text-primary transition-colors duration-200 flex items-center gap-1 group"
+                    className="text-text-secondary text-sm hover:text-gold transition-all duration-300 flex items-center gap-1 group hover:translate-x-1"
                   >
                     {link.label}
                     <ArrowUpRight className="w-3 h-3 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" />
@@ -91,7 +91,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/careers"
-                  className="text-text-secondary text-sm hover:text-text-primary transition-colors duration-200"
+                  className="inline-block text-text-secondary text-sm hover:text-gold transition-all duration-300 hover:translate-x-1"
                 >
                   Careers
                 </Link>
@@ -109,7 +109,7 @@ export function Footer() {
                 <li key={service.slug}>
                   <Link
                     href={`/services/${service.slug}`}
-                    className="text-text-secondary text-sm hover:text-text-primary transition-colors duration-200 flex items-center gap-1 group"
+                    className="text-text-secondary text-sm hover:text-gold transition-all duration-300 flex items-center gap-1 group hover:translate-x-1"
                   >
                     {service.shortTitle}
                     <ArrowUpRight className="w-3 h-3 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" />
@@ -119,7 +119,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/services"
-                  className="text-gold text-sm hover:text-gold-light transition-colors duration-200"
+                  className="group inline-flex items-center text-gold text-sm hover:text-gold-light transition-all duration-300 hover:translate-x-1"
                 >
                   View All Services →
                 </Link>
@@ -136,18 +136,18 @@ export function Footer() {
               <li>
                 <a
                   href={`tel:${BRAND.phone.replace(/\s/g, '')}`}
-                  className="flex items-start gap-3 text-text-secondary text-sm hover:text-text-primary transition-colors duration-200"
+                  className="group flex items-start gap-3 text-text-secondary text-sm hover:text-gold transition-all duration-300 hover:translate-x-1"
                 >
-                  <Phone className="w-4 h-4 mt-0.5 text-gold" />
+                  <Phone className="w-4 h-4 mt-0.5 text-gold transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110" />
                   {BRAND.phone}
                 </a>
               </li>
               <li>
                 <a
                   href={`mailto:${BRAND.email}`}
-                  className="flex items-start gap-3 text-text-secondary text-sm hover:text-text-primary transition-colors duration-200"
+                  className="group flex items-start gap-3 text-text-secondary text-sm hover:text-gold transition-all duration-300 hover:translate-x-1"
                 >
-                  <Mail className="w-4 h-4 mt-0.5 text-gold" />
+                  <Mail className="w-4 h-4 mt-0.5 text-gold transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110" />
                   {BRAND.email}
                 </a>
               </li>
@@ -156,9 +156,9 @@ export function Footer() {
                   href={getWhatsAppUrl(BRAND.whatsapp)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-start gap-3 text-text-secondary text-sm hover:text-text-primary transition-colors duration-200"
+                  className="group flex items-start gap-3 text-text-secondary text-sm hover:text-gold transition-all duration-300 hover:translate-x-1"
                 >
-                  <MessageCircle className="w-4 h-4 mt-0.5 text-gold" />
+                  <MessageCircle className="w-4 h-4 mt-0.5 text-gold transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:scale-110" />
                   WhatsApp Us
                 </a>
               </li>
@@ -180,14 +180,14 @@ export function Footer() {
             © {currentYear} {BRAND.name} Studios. All rights reserved.
           </p>
           <div className="flex items-center gap-6 text-xs text-text-muted">
-            <Link href="/privacy-policy" className="hover:text-text-secondary transition-colors">
+            <Link href="/privacy-policy" className="hover:text-gold transition-colors duration-300">
               Privacy Policy
             </Link>
-            <Link href="/terms" className="hover:text-text-secondary transition-colors">
+            <Link href="/terms" className="hover:text-gold transition-colors duration-300">
               Terms of Service
             </Link>
             <span className="flex items-center gap-1">
-              Crafted with <Heart className="w-3 h-3 text-gold" /> in India
+              Crafted with <Heart className="w-3 h-3 text-gold animate-pulse-gold" /> in India
             </span>
           </div>
         </div>

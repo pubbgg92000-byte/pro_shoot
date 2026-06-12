@@ -2,10 +2,11 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { SERVICES, TESTIMONIALS, FAQ_DATA } from '@/lib/constants';
+import { SERVICES, TESTIMONIALS } from '@/lib/constants';
 import { BRAND } from '@/lib/constants';
 import { getWhatsAppUrl } from '@/lib/utils';
 import { Check, ArrowRight, MessageCircle } from 'lucide-react';
+import { ServicePageAnimations } from '@/components/services/ServicePageAnimations';
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -52,18 +53,31 @@ export default async function ServicePage({ params }: Props) {
 
   return (
     <>
+      <ServicePageAnimations />
+
       {/* Hero */}
-      <section className="relative min-h-[60vh] md:min-h-[70vh] flex items-center justify-center overflow-hidden pt-24 pb-16">
+      <section
+        data-service-hero
+        className="relative min-h-[60vh] md:min-h-[70vh] flex items-center justify-center overflow-hidden pt-24 pb-16"
+      >
         <div className="absolute inset-0">
-          <Image src={service.image} alt={service.title} fill className="object-cover" priority sizes="100vw" />
+          <Image
+            data-service-hero-image
+            src={service.image}
+            alt={service.title}
+            fill
+            className="object-cover will-change-transform"
+            priority
+            sizes="100vw"
+          />
           {/* Dark base overlay */}
-          <div className="absolute inset-0 bg-black/75" />
+          <div className="absolute inset-0 bg-black/35" />
           {/* Bottom fade for content area */}
-          <div className="absolute inset-0 bg-gradient-to-t from-bg-primary via-bg-primary/60 to-black/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-bg-primary via-bg-primary/20 to-black/20" />
           {/* Vignette edges */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.5)_100%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(0,0,0,0.28)_100%)]" />
         </div>
-        <div className="relative z-10 text-center container-luxury">
+        <div data-service-hero-content className="relative z-10 text-center container-luxury">
           <p
             className="text-xs uppercase tracking-[0.3em] text-gold mb-6"
             style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}
@@ -104,7 +118,7 @@ export default async function ServicePage({ params }: Props) {
       {/* Overview */}
       <section className="section-padding bg-bg-primary">
         <div className="container-luxury max-w-4xl">
-          <div className="text-center">
+          <div data-service-heading className="text-center">
             <p className="text-xs uppercase tracking-[0.3em] text-gold mb-4">Overview</p>
             <h2 className="font-heading text-3xl md:text-4xl mb-8">{service.tagline}</h2>
             <p className="text-text-secondary text-lg leading-relaxed">{service.description}</p>
@@ -115,14 +129,18 @@ export default async function ServicePage({ params }: Props) {
       {/* Process */}
       <section className="section-padding bg-bg-secondary">
         <div className="container-luxury max-w-5xl">
-          <div className="text-center mb-20">
+          <div data-service-heading className="text-center mb-20">
             <p className="text-xs uppercase tracking-[0.3em] text-gold mb-4">How It Works</p>
             <h2 className="font-heading text-4xl md:text-5xl">Our <span className="text-gold-gradient">Process</span></h2>
           </div>
           <div className="space-y-12">
             {PROCESS_STEPS.map((item, i) => (
-              <div key={item.step} className={`flex items-start gap-8 ${i % 2 !== 0 ? 'md:flex-row-reverse md:text-right' : ''}`}>
-                <div className="flex-shrink-0 w-16 h-16 rounded-2xl bg-gold/10 border border-gold/20 flex items-center justify-center">
+              <div
+                data-process-step
+                key={item.step}
+                className={`group flex items-start gap-8 ${i % 2 !== 0 ? 'md:flex-row-reverse md:text-right' : ''}`}
+              >
+                <div className="flex-shrink-0 w-16 h-16 rounded-2xl bg-gold/10 border border-gold/20 flex items-center justify-center transition-all duration-500 group-hover:bg-gold/20 group-hover:border-gold/50 group-hover:scale-105">
                   <span className="font-heading text-xl text-gold">{item.step}</span>
                 </div>
                 <div className="flex-1">
@@ -138,15 +156,15 @@ export default async function ServicePage({ params }: Props) {
       {/* Deliverables */}
       <section className="section-padding bg-bg-primary">
         <div className="container-luxury max-w-3xl">
-          <div className="text-center mb-16">
+          <div data-service-heading className="text-center mb-16">
             <p className="text-xs uppercase tracking-[0.3em] text-gold mb-4">What You Receive</p>
             <h2 className="font-heading text-4xl md:text-5xl">
               <span className="text-gold-gradient">Deliverables</span>
             </h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div data-service-stagger className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {DELIVERABLES.map((item) => (
-              <div key={item} className="flex items-start gap-3 p-4 rounded-xl border border-border hover:border-border-gold transition-colors duration-300">
+              <div key={item} className="flex items-start gap-3 p-4 rounded-xl border border-border hover:border-border-gold hover:bg-gold/[0.04] hover:-translate-y-1 transition-all duration-300">
                 <Check className="w-5 h-5 text-gold flex-shrink-0 mt-0.5" />
                 <span className="text-text-secondary text-sm">{item}</span>
               </div>
@@ -158,13 +176,13 @@ export default async function ServicePage({ params }: Props) {
       {/* Testimonials */}
       <section className="section-padding bg-bg-secondary">
         <div className="container-luxury max-w-4xl">
-          <div className="text-center mb-16">
+          <div data-service-heading className="text-center mb-16">
             <p className="text-xs uppercase tracking-[0.3em] text-gold mb-4">Client Love</p>
             <h2 className="font-heading text-4xl md:text-5xl">What Clients <span className="text-gold-gradient">Say</span></h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div data-service-stagger className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {testimonials.map((t) => (
-              <div key={t.id} className="glass-light rounded-2xl p-8">
+              <div key={t.id} className="glass-light rounded-2xl p-8 transition-all duration-500 hover:-translate-y-2 hover:border-gold/30">
                 <p className="text-text-secondary text-sm leading-relaxed mb-6">&ldquo;{t.quote}&rdquo;</p>
                 <div>
                   <p className="font-medium text-sm">{t.name}</p>
@@ -178,7 +196,7 @@ export default async function ServicePage({ params }: Props) {
 
       {/* Pricing CTA */}
       <section className="section-padding bg-bg-primary">
-        <div className="container-luxury text-center max-w-3xl">
+        <div data-service-reveal className="container-luxury text-center max-w-3xl">
           <p className="text-xs uppercase tracking-[0.3em] text-gold mb-4">Investment</p>
           <h2 className="font-heading text-4xl md:text-5xl mb-4">
             Starting From <span className="text-gold-gradient">{service.price}</span>
@@ -194,11 +212,11 @@ export default async function ServicePage({ params }: Props) {
       {/* Related Services */}
       <section className="section-padding bg-bg-secondary">
         <div className="container-luxury">
-          <div className="text-center mb-16">
+          <div data-service-heading className="text-center mb-16">
             <p className="text-xs uppercase tracking-[0.3em] text-gold mb-4">You May Also Like</p>
             <h2 className="font-heading text-4xl md:text-5xl">Related <span className="text-gold-gradient">Services</span></h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div data-service-stagger className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {relatedServices.map((s) => (
               <Link key={s.slug} href={`/services/${s.slug}`} className="group relative aspect-[3/4] rounded-2xl overflow-hidden hover-lift">
                 <Image src={s.image} alt={s.title} fill className="object-cover transition-transform duration-700 group-hover:scale-110" sizes="33vw" />
