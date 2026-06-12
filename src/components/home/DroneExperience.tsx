@@ -8,8 +8,9 @@ import { useGSAP } from '@gsap/react';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const TOTAL_FRAMES = 240;
+const TOTAL_FRAMES = 300;
 const FRAME_PATH = '/sequences/drone_hover';
+const TEXT_REVEAL_FRAME = 150;
 const TEXT_REVEAL_DURATION = 24;
 const FINAL_HOLD_DURATION = 72;
 const PIXELS_PER_TIMELINE_UNIT = 18;
@@ -111,7 +112,9 @@ export function DroneExperience() {
     });
 
     timeline
-      .to(frameRef.current, {
+      .to(
+        frameRef.current,
+        {
         value: TOTAL_FRAMES - 1,
         duration: TOTAL_FRAMES - 1,
         ease: 'none',
@@ -124,14 +127,20 @@ export function DroneExperience() {
             draw();
           }
         },
-      })
-      .to(contentRef.current, {
-        autoAlpha: 1,
-        y: 0,
-        duration: TEXT_REVEAL_DURATION,
-        ease: 'power2.out',
-      })
-      .to({}, { duration: FINAL_HOLD_DURATION });
+        },
+        0
+      )
+      .to(
+        contentRef.current,
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: TEXT_REVEAL_DURATION,
+          ease: 'power2.out',
+        },
+        TEXT_REVEAL_FRAME
+      )
+      .to({}, { duration: FINAL_HOLD_DURATION }, TOTAL_FRAMES - 1);
 
     const onResize = () => {
       resizeCanvas();
