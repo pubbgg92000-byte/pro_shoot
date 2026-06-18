@@ -22,6 +22,7 @@ export function DroneExperience() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const initialTextRef = useRef<HTMLDivElement>(null);
   const [loaded, setLoaded] = useState(false);
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const loadedFramesRef = useRef<boolean[]>([]);
@@ -158,6 +159,7 @@ export function DroneExperience() {
 
     resizeCanvas();
     draw();
+    gsap.set(initialTextRef.current, { autoAlpha: 1 });
     gsap.set(contentRef.current, { autoAlpha: 0, y: 36 });
 
     const timeline = gsap.timeline({
@@ -197,6 +199,16 @@ export function DroneExperience() {
           },
         },
         0
+      )
+      .to(
+        initialTextRef.current,
+        {
+          autoAlpha: 0,
+          y: -20,
+          duration: 12,
+          ease: 'power2.in',
+        },
+        TEXT_REVEAL_FRAME - 12
       )
       .to(
         contentRef.current,
@@ -239,6 +251,15 @@ export function DroneExperience() {
           className="absolute inset-0 pointer-events-none"
           style={{ background: 'radial-gradient(ellipse at center, transparent 50%, rgba(5,5,5,0.6) 100%)' }}
         />
+
+        {/* Initial Text Overlay */}
+        <div
+          ref={initialTextRef}
+          className="pointer-events-none absolute bottom-12 left-0 right-0 z-10 flex flex-col items-center text-center opacity-100 md:bottom-20"
+        >
+          <p className="text-sm uppercase tracking-[0.3em] text-gold/80" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>Hovering</p>
+          <h3 className="font-heading mt-2 text-2xl text-text-primary/90 md:text-3xl" style={{ textShadow: '0 2px 12px rgba(0,0,0,0.8)' }}>Flight Ready</h3>
+        </div>
 
         {/* Content overlay */}
         <div

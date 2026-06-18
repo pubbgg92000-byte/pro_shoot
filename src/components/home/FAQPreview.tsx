@@ -14,7 +14,7 @@ export function FAQPreview() {
   ).slice(0, 5);
 
   return (
-    <section className="section-padding bg-bg-primary" id="faq">
+    <section className="section-padding bg-bg-primary overflow-hidden" id="faq">
       <div className="container-luxury max-w-3xl">
         <div className="text-center mb-16">
           <p className="text-xs uppercase tracking-[0.3em] text-gold mb-4">Common Questions</p>

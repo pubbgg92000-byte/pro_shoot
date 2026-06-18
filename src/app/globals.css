@@ -129,6 +129,7 @@
 html {
   scroll-behavior: smooth;
   width: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -145,6 +146,12 @@ img,
 canvas,
 svg {
   max-width: 100%;
+}
+
+/* Prevent any child from expanding the viewport width */
+#__next,
+main {
+  overflow-x: hidden;
 }
 
 /* Selection */

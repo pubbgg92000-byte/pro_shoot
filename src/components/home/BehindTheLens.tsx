@@ -43,7 +43,7 @@ export function BehindTheLens() {
   }, { scope: sectionRef });
 
   return (
-    <section ref={sectionRef} className="section-padding bg-bg-primary" id="behind-the-lens">
+    <section ref={sectionRef} className="section-padding bg-bg-primary overflow-hidden" id="behind-the-lens">
       <div className="container-luxury">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           {/* Image */}

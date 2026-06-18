@@ -35,7 +35,8 @@ const TEXT_SLIDES = [
     heading: 'Excellence',
     headingClass: 'text-text-primary',
     sub: 'Every frame is a masterpiece',
-    cta: { label: 'Rent This Camera', href: '/rentals' },
+    cta: { label: 'Rent Our Devices', href: '/rentals' },
+    containerClass: 'mt-32 sm:mt-48 md:mt-56',
   },
 ];
 
@@ -256,7 +257,7 @@ export function DSLRShowcase() {
       }
     };
 
-    addTextReveal(0, START_HOLD + 8, 48);
+    addTextReveal(0, 0, START_HOLD + 56);
     addTextReveal(1, START_HOLD + 108, 48);
     addTextReveal(2, START_HOLD + 208, END_HOLD + 46, false);
 
@@ -309,7 +310,7 @@ export function DSLRShowcase() {
               ref={(el) => { textRefs.current[i] = el; }}
               className="invisible absolute inset-0 flex items-center justify-center opacity-0"
             >
-              <div className="container-luxury px-5 text-center sm:px-6">
+              <div className={`container-luxury px-5 text-center sm:px-6 ${(slide as any).containerClass || ''}`}>
                 {slide.label && (
                   <p className="text-xs uppercase tracking-[0.3em] text-gold mb-4"
                     style={{ textShadow: '0 2px 12px rgba(0,0,0,0.8)' }}>

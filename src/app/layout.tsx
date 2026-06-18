@@ -144,7 +144,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body suppressHydrationWarning className="min-h-screen flex flex-col bg-bg-primary text-text-primary antialiased w-full">
+      <body suppressHydrationWarning className="min-h-screen flex flex-col bg-bg-primary text-text-primary antialiased w-full overflow-x-hidden">
         <GSAPProvider />
         <Navbar />
         <main className="flex-1">{children}</main>

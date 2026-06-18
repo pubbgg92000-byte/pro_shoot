@@ -59,7 +59,7 @@ export function FeaturedServices() {
   }, { scope: sectionRef });
 
   return (
-    <section ref={sectionRef} className="section-padding bg-bg-primary relative" id="services">
+    <section ref={sectionRef} className="section-padding bg-bg-primary relative overflow-hidden" id="services">
       <div className="container-luxury">
         {/* Section Heading */}
         <div ref={headingRef} className="text-center mb-20">
