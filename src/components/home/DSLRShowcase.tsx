@@ -17,7 +17,19 @@ const START_HOLD = 24;
 const END_HOLD = 36;
 const PIXELS_PER_TIMELINE_UNIT = 18;
 
-const TEXT_SLIDES = [
+type TextSlide = {
+  label: string | null;
+  heading: string;
+  headingClass: string;
+  sub: string | null;
+  cta?: {
+    label: string;
+    href: string;
+  };
+  containerClass?: string;
+};
+
+const TEXT_SLIDES: TextSlide[] = [
   {
     label: 'Our Craft',
     heading: 'Precision',
@@ -310,7 +322,7 @@ export function DSLRShowcase() {
               ref={(el) => { textRefs.current[i] = el; }}
               className="invisible absolute inset-0 flex items-center justify-center opacity-0"
             >
-              <div className={`container-luxury px-5 text-center sm:px-6 ${(slide as any).containerClass || ''}`}>
+              <div className={`container-luxury px-5 text-center sm:px-6 ${slide.containerClass ?? ''}`}>
                 {slide.label && (
                   <p className="text-xs uppercase tracking-[0.3em] text-gold mb-4"
                     style={{ textShadow: '0 2px 12px rgba(0,0,0,0.8)' }}>
