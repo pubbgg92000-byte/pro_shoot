@@ -1,5 +1,5 @@
 name: Validate and Deploy
-run-name: ${{ github.event_name == 'workflow_dispatch' && 'Manual production deploy' || format('Validate {0}', github.ref_name) }}
+run-name: ${{ github.event_name == 'workflow_dispatch' && 'Manual production deploy' || format('Validate and deploy {0}', github.ref_name) }}
 
 on:
   pull_request:
@@ -50,7 +50,7 @@ jobs:
 
   deploy:
     name: Deploy to Vercel Production
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
     needs: validate
     runs-on: ubuntu-latest
     timeout-minutes: 30
