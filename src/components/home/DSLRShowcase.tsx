@@ -8,7 +8,8 @@ import { useGSAP } from '@gsap/react';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const TOTAL_FRAMES = 300;
+const DESKTOP_FRAMES = 300;
+const MOBILE_FRAMES = 224;
 const DESKTOP_FRAME_PATH = '/sequences/dslr_assembly';
 const MOBILE_FRAME_PATH = '/sequences/dslr_mobile';
 const INITIAL_PRELOAD_FRAMES = 20;
@@ -16,6 +17,8 @@ const FRAME_LOOKAHEAD = 12;
 const START_HOLD = 24;
 const END_HOLD = 36;
 const PIXELS_PER_TIMELINE_UNIT = 18;
+
+const isMobileQuery = '(max-width: 767px)';
 
 type TextSlide = {
   label: string | null;
@@ -64,17 +67,20 @@ export function DSLRShowcase() {
   const renderFrameRef = useRef<() => void>(() => undefined);
   const frameIndexRef = useRef({ value: 0 });
   const lastFrameRef = useRef(-1);
+  const totalFramesRef = useRef(DESKTOP_FRAMES);
 
   useEffect(() => {
-    const images = Array.from({ length: TOTAL_FRAMES }) as HTMLImageElement[];
-    const loadedFrames = Array.from({ length: TOTAL_FRAMES }, () => false);
+    const isMobile = window.matchMedia(isMobileQuery).matches;
+    const totalFrames = isMobile ? MOBILE_FRAMES : DESKTOP_FRAMES;
+    totalFramesRef.current = totalFrames;
+
+    const images = Array.from({ length: totalFrames }) as HTMLImageElement[];
+    const loadedFrames = Array.from({ length: totalFrames }, () => false);
     let isCancelled = false;
-    const framePath = window.matchMedia('(max-width: 767px)').matches
-      ? MOBILE_FRAME_PATH
-      : DESKTOP_FRAME_PATH;
+    const framePath = isMobile ? MOBILE_FRAME_PATH : DESKTOP_FRAME_PATH;
 
     const loadFrame = (index: number) => {
-      if (index < 0 || index >= TOTAL_FRAMES) return Promise.resolve();
+      if (index < 0 || index >= totalFrames) return Promise.resolve();
       if (loadedFrames[index] || loadingFramesRef.current.has(index)) {
         return Promise.resolve();
       }
@@ -111,7 +117,7 @@ export function DSLRShowcase() {
       if (isCancelled) return;
       setImagesLoaded(true);
 
-      for (let i = INITIAL_PRELOAD_FRAMES; i < TOTAL_FRAMES && !isCancelled; i += 1) {
+      for (let i = INITIAL_PRELOAD_FRAMES; i < totalFrames && !isCancelled; i += 1) {
         await loadFrame(i);
       }
     });
@@ -130,6 +136,7 @@ export function DSLRShowcase() {
   useGSAP(() => {
     if (!imagesLoaded || !canvasRef.current || !sectionRef.current) return;
 
+    const totalFrames = totalFramesRef.current;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -146,7 +153,7 @@ export function DSLRShowcase() {
     const queueNearbyFrames = (frame: number) => {
       for (
         let index = frame;
-        index <= Math.min(TOTAL_FRAMES - 1, frame + FRAME_LOOKAHEAD);
+        index <= Math.min(totalFrames - 1, frame + FRAME_LOOKAHEAD);
         index += 1
       ) {
         void loadFrameRef.current(index);
@@ -156,12 +163,12 @@ export function DSLRShowcase() {
     const findRenderableFrame = (frame: number) => {
       if (loadedFramesRef.current[frame]) return frame;
 
-      for (let distance = 1; distance < TOTAL_FRAMES; distance += 1) {
+      for (let distance = 1; distance < totalFrames; distance += 1) {
         const previous = frame - distance;
         const next = frame + distance;
 
         if (previous >= 0 && loadedFramesRef.current[previous]) return previous;
-        if (next < TOTAL_FRAMES && loadedFramesRef.current[next]) return next;
+        if (next < totalFrames && loadedFramesRef.current[next]) return next;
       }
 
       return -1;
@@ -169,7 +176,7 @@ export function DSLRShowcase() {
 
     const updateCanvas = () => {
       const currentIndex = Math.round(frameIndexRef.current.value);
-      const clamped = Math.max(0, Math.min(currentIndex, TOTAL_FRAMES - 1));
+      const clamped = Math.max(0, Math.min(currentIndex, totalFrames - 1));
       queueNearbyFrames(clamped);
 
       const renderableFrame = findRenderableFrame(clamped);
@@ -202,7 +209,7 @@ export function DSLRShowcase() {
         end: () =>
           `+=${Math.max(
             window.innerHeight * 5,
-            (START_HOLD + TOTAL_FRAMES - 1 + END_HOLD) * PIXELS_PER_TIMELINE_UNIT
+            (START_HOLD + totalFrames - 1 + END_HOLD) * PIXELS_PER_TIMELINE_UNIT
           )}`,
         pin: true,
         pinSpacing: true,
@@ -216,8 +223,8 @@ export function DSLRShowcase() {
     timeline
       .to({}, { duration: START_HOLD })
       .to(frameIndexRef.current, {
-        value: TOTAL_FRAMES - 1,
-        duration: TOTAL_FRAMES - 1,
+        value: totalFrames - 1,
+        duration: totalFrames - 1,
         ease: 'none',
         snap: { value: 1 },
         onUpdate: () => {
@@ -230,6 +237,11 @@ export function DSLRShowcase() {
         },
       })
       .to({}, { duration: END_HOLD });
+
+    // Scale text reveal positions proportionally to the frame count.
+    // Desktop reference: 300 frames. Text positions are defined for 300 frames
+    // and scaled by (totalFrames / 300) for mobile's 240 frames.
+    const r = totalFrames / DESKTOP_FRAMES;
 
     const addTextReveal = (
       index: number,
@@ -269,9 +281,9 @@ export function DSLRShowcase() {
       }
     };
 
-    addTextReveal(0, 0, START_HOLD + 56);
-    addTextReveal(1, START_HOLD + 108, 48);
-    addTextReveal(2, START_HOLD + 208, END_HOLD + 46, false);
+    addTextReveal(0, 0, START_HOLD + Math.round(56 * r));
+    addTextReveal(1, START_HOLD + Math.round(108 * r), Math.round(48 * r));
+    addTextReveal(2, START_HOLD + Math.round(208 * r), END_HOLD + Math.round(46 * r), false);
 
     const handleResize = () => {
       resizeCanvas();
