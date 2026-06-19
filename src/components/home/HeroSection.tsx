@@ -6,7 +6,8 @@ import Link from 'next/link';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
-import { ChevronDown } from 'lucide-react';
+import { ImageSlider } from '@/components/ui/ImageSlider';
+import { HERO_IMAGES } from '@/lib/imageData';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -17,79 +18,56 @@ export function HeroSection() {
   const ctaRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const isStatic = HERO_IMAGES.length === 1;
 
   useGSAP(() => {
     const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
-    // Image scale in
-    tl.fromTo(
-      imageRef.current,
-      { scale: 1.2, opacity: 0 },
-      { scale: 1, opacity: 1, duration: 1.8 }
-    );
+    // Image scale-in (only for static single image)
+    if (isStatic) {
+      tl.fromTo(
+        imageRef.current,
+        { scale: 1.2, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 1.8 }
+      );
+    }
 
     // Overlay fade
     tl.fromTo(
       overlayRef.current,
       { opacity: 0 },
       { opacity: 1, duration: 1 },
-      0.3
+      isStatic ? 0.3 : 0
     );
 
-    // Split heading animation — word by word
+    // Heading lines
     const headingEl = headingRef.current;
     if (headingEl) {
       const lines = headingEl.querySelectorAll('.hero-line');
       tl.fromTo(
         lines,
         { y: 100, opacity: 0, rotateX: -40 },
-        {
-          y: 0,
-          opacity: 1,
-          rotateX: 0,
-          duration: 1,
-          stagger: 0.15,
-        },
-        0.6
+        { y: 0, opacity: 1, rotateX: 0, duration: 1, stagger: 0.15 },
+        isStatic ? 0.6 : 0.4
       );
     }
 
-    // Subheading
-    tl.fromTo(
-      subRef.current,
-      { y: 30, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.8 },
-      1.2
-    );
+    tl.fromTo(subRef.current,   { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8 }, isStatic ? 1.2 : 1.0);
+    tl.fromTo(ctaRef.current,   { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8 }, isStatic ? 1.5 : 1.3);
 
-    // CTAs
-    tl.fromTo(
-      ctaRef.current,
-      { y: 30, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.8 },
-      1.5
-    );
-
-    // Scroll indicator
-    tl.fromTo(
-      scrollRef.current,
-      { opacity: 0 },
-      { opacity: 1, duration: 0.6 },
-      2
-    );
-
-    // Parallax on scroll
-    gsap.to(imageRef.current, {
-      y: 150,
-      scale: 1.1,
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: 'top top',
-        end: 'bottom top',
-        scrub: 1,
-      },
-    });
+    // Gentle scroll parallax (static image only — no scale to avoid layout jumps)
+    if (isStatic) {
+      gsap.to(imageRef.current, {
+        y: 80,
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 1,
+        },
+      });
+    }
   }, { scope: sectionRef });
 
   return (
@@ -98,25 +76,45 @@ export function HeroSection() {
       className="relative flex h-[100svh] min-h-[640px] items-center justify-center overflow-hidden sm:h-screen sm:min-h-[700px]"
       id="hero"
     >
-      {/* Background Image */}
-      <div ref={imageRef} className="absolute inset-0 opacity-0">
-        <Image
-          src="/images/shoot-3.png"
-          alt="Luxury wedding photography — bride at ceremony with golden confetti"
-          fill
-          className="object-cover object-[58%_center] md:object-center"
-          priority
-          sizes="100vw"
-          quality={90}
-        />
-      </div>
+      {/* ── Background ──
+          • 1 image in HERO_IMAGES → static with scale-in + parallax
+          • 2+ images              → auto-cycling kenburns slider
+          Edit HERO_IMAGES in lib/imageData.ts to switch modes.      */}
+      {isStatic ? (
+        <div ref={imageRef} className="absolute inset-0 opacity-0">
+          <Image
+            src={HERO_IMAGES[0]}
+            alt="Luxury wedding photography — bride at ceremony with golden confetti"
+            fill
+            className="object-cover object-[58%_center] md:object-center"
+            priority
+            sizes="100vw"
+            quality={90}
+          />
+        </div>
+      ) : (
+        <div className="absolute inset-0">
+          <ImageSlider
+            images={HERO_IMAGES}
+            alt="Pro Shoot photography"
+            interval={5000}
+            effect="kenburns"
+            showArrows={false}
+            showDots={false}
+            pauseOnHover={false}
+            priority
+            className="h-full w-full"
+            sizes="100vw"
+          />
+        </div>
+      )}
 
-      {/* Gradient Overlays */}
+      {/* Gradient Overlays — lighter so image is more visible */}
       <div ref={overlayRef} className="absolute inset-0 opacity-0">
-        <div className="absolute inset-0 bg-black/35 md:bg-black/45" />
-        <div className="absolute inset-0 bg-gradient-to-b from-bg-primary/45 via-transparent to-bg-primary/85 md:from-bg-primary/65" />
-        <div className="absolute inset-0 bg-gradient-to-r from-bg-primary/25 via-transparent to-bg-primary/20 md:from-bg-primary/35 md:to-bg-primary/35" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_36%,rgba(0,0,0,0.3)_100%)]" />
+        <div className="absolute inset-0 bg-black/25 md:bg-black/35" />
+        <div className="absolute inset-0 bg-gradient-to-b from-bg-primary/35 via-transparent to-bg-primary/80 md:from-bg-primary/50" />
+        <div className="absolute inset-0 bg-gradient-to-r from-bg-primary/20 via-transparent to-bg-primary/15 md:from-bg-primary/25 md:to-bg-primary/25" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.2)_100%)]" />
       </div>
 
       {/* Floating Gold Particles */}
@@ -141,7 +139,7 @@ export function HeroSection() {
         <div className="mb-7 inline-flex max-w-[calc(100vw-48px)] items-center gap-2 rounded-full border border-gold/30 bg-black/30 px-4 py-2 backdrop-blur-sm sm:mb-8">
           <div className="w-1.5 h-1.5 rounded-full bg-gold animate-pulse-gold" />
           <span className="text-[10px] uppercase tracking-[0.2em] text-gold font-medium sm:text-xs">
-            Premium Photography Studio
+            Luxury Photography. Worldwide.
           </span>
         </div>
 
@@ -188,14 +186,7 @@ export function HeroSection() {
         </div>
       </div>
 
-      {/* Scroll Indicator */}
-      <div
-        ref={scrollRef}
-        className="absolute bottom-[max(1.25rem,env(safe-area-inset-bottom))] left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2 opacity-0 sm:bottom-8"
-      >
-        <span className="text-[10px] uppercase tracking-[0.3em] text-gray-400">Scroll</span>
-        <ChevronDown className="w-4 h-4 text-gold animate-scroll-indicator" />
-      </div>
+
     </section>
   );
 }

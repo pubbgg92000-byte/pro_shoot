@@ -3,30 +3,39 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { Search, X, Maximize2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { CATEGORY_IMAGES } from '@/lib/imageData';
 
-const CATEGORIES = ['All', 'Wedding', 'Pre-Wedding', 'Baby', 'Events', 'Corporate', 'Fashion', 'Drone'];
+const CATEGORIES = ['All', 'Weddings', 'Pre Wedding', 'Maternity', 'Baby Shoot', 'Family', 'Corporate', 'Fashion', 'Drone'];
+
+const FRAME_RATIOS = [
+  'aspect-[4/5]',
+  'aspect-[5/4]',
+  'aspect-[3/4]',
+  'aspect-[4/5]',
+  'aspect-[4/3]',
+] as const;
 
 const PORTFOLIO_ITEMS = [
-  { id: 1, src: '/images/shoot-3.png', title: 'The Golden Hour', category: 'Wedding', location: 'Udaipur' },
-  { id: 2, src: '/images/shoot-2.png', title: 'Eternal Vows', category: 'Pre-Wedding', location: 'Kerala' },
-  { id: 3, src: '/images/baby-shoot-1.png', title: 'First Light', category: 'Baby', location: 'Studio' },
-  { id: 4, src: '/images/shoot-3.png', title: 'Sacred Bonds', category: 'Wedding', location: 'Goa' },
-  { id: 5, src: '/images/shoot-2.png', title: 'Forest Dreams', category: 'Pre-Wedding', location: 'Coorg' },
-  { id: 6, src: '/images/baby-shoot-1.png', title: 'Tender Bloom', category: 'Baby', location: 'Studio' },
-  { id: 7, src: '/images/shoot-3.png', title: 'Royal Celebration', category: 'Wedding', location: 'Jaipur' },
-  { id: 8, src: '/images/shoot-2.png', title: 'Monsoon Love', category: 'Pre-Wedding', location: 'Munnar' },
-  { id: 9, src: '/sequences/drone_hover/frame_000120.png', title: 'Aerial Perspectives', category: 'Drone', location: 'Bangalore' },
-  { id: 10, src: '/images/shoot-3.png', title: 'Timeless Grace', category: 'Wedding', location: 'Mumbai' },
-  { id: 11, src: '/images/baby-shoot-1.png', title: 'Sweet Dreams', category: 'Baby', location: 'Studio' },
-  { id: 12, src: '/images/shoot-2.png', title: 'Garden Romance', category: 'Pre-Wedding', location: 'Ooty' },
-  { id: 13, src: '/generated/event-1.png', title: 'A Night to Remember', category: 'Events', location: 'Bangalore' },
-  { id: 14, src: '/generated/video-1.png', title: 'Celebration in Motion', category: 'Events', location: 'Chennai' },
-  { id: 15, src: '/generated/corporate-1.png', title: 'Executive Presence', category: 'Corporate', location: 'Bangalore' },
-  { id: 16, src: '/generated/product-1.png', title: 'Brand Story', category: 'Corporate', location: 'Studio' },
-  { id: 17, src: '/generated/fashion-1.png', title: 'Editorial Elegance', category: 'Fashion', location: 'Mumbai' },
-  { id: 18, src: '/generated/portfolio-fashion.png', title: 'Modern Muse', category: 'Fashion', location: 'Studio' },
-  { id: 19, src: '/generated/drone-rental.png', title: 'Flight Ready', category: 'Drone', location: 'Bangalore' },
-  { id: 20, src: '/sequences/drone_hover/frame_000210.png', title: 'Above the Horizon', category: 'Drone', location: 'Coorg' },
+  { id: 1, src: CATEGORY_IMAGES.wedding[0], title: 'Sacred Vows', category: 'Weddings', location: 'Udaipur', position: 'center' },
+  { id: 2, src: CATEGORY_IMAGES.wedding[1], title: 'Golden Mandapam', category: 'Weddings', location: 'Dubai', position: 'center 42%' },
+  { id: 3, src: CATEGORY_IMAGES.wedding[2], title: 'Royal Celebration', category: 'Weddings', location: 'Jaipur', position: 'center 38%' },
+  { id: 4, src: CATEGORY_IMAGES.preWedding[0], title: 'Eternal Vows', category: 'Pre Wedding', location: 'Bali', position: 'center' },
+  { id: 5, src: CATEGORY_IMAGES.preWedding[1], title: 'Tea Garden Romance', category: 'Pre Wedding', location: 'Sri Lanka', position: 'center 45%' },
+  { id: 6, src: CATEGORY_IMAGES.preWedding[2], title: 'Garden Dreams', category: 'Pre Wedding', location: 'Lake Como', position: 'center' },
+  { id: 7, src: CATEGORY_IMAGES.maternity[0], title: 'Radiant Glow', category: 'Maternity', location: 'Studio', position: 'center 36%' },
+  { id: 8, src: CATEGORY_IMAGES.maternity[1], title: 'Mother Earth', category: 'Maternity', location: 'Bangalore', position: 'center 40%' },
+  { id: 9, src: CATEGORY_IMAGES.maternity[2], title: 'Silk & Soul', category: 'Maternity', location: 'Singapore', position: 'center 36%' },
+  { id: 10, src: CATEGORY_IMAGES.baby[0], title: 'First Light', category: 'Baby Shoot', location: 'Studio', position: 'center' },
+  { id: 11, src: CATEGORY_IMAGES.baby[1], title: 'Tiny Miracle', category: 'Baby Shoot', location: 'Studio', position: 'center' },
+  { id: 12, src: CATEGORY_IMAGES.baby[2], title: 'Sweet Dreams', category: 'Baby Shoot', location: 'Studio', position: 'center' },
+  { id: 13, src: '/images/shoot-2.png', title: 'Family Heirloom', category: 'Family', location: 'Bangalore', position: 'center 35%' },
+  { id: 14, src: '/generated/portfolio-maternity.png', title: 'Generations', category: 'Family', location: 'Chennai', position: 'center' },
+  { id: 15, src: CATEGORY_IMAGES.corporate[0], title: 'Executive Presence', category: 'Corporate', location: 'Bangalore', position: 'center 35%' },
+  { id: 16, src: CATEGORY_IMAGES.corporate[1], title: 'Brand Summit', category: 'Corporate', location: 'London', position: 'center' },
+  { id: 17, src: CATEGORY_IMAGES.fashion[0], title: 'Editorial Elegance', category: 'Fashion', location: 'Paris', position: 'center 32%' },
+  { id: 18, src: CATEGORY_IMAGES.fashion[1], title: 'Modern Muse', category: 'Fashion', location: 'Studio', position: 'center 36%' },
+  { id: 19, src: CATEGORY_IMAGES.drone[0], title: 'Aerial Perspectives', category: 'Drone', location: 'Bangalore', position: 'center' },
+  { id: 20, src: CATEGORY_IMAGES.drone[1], title: 'Above the Horizon', category: 'Drone', location: 'Maldives', position: 'center' },
 ];
 
 export default function PortfolioPage() {
@@ -58,16 +67,16 @@ export default function PortfolioPage() {
       </section>
 
       {/* Filters */}
-      <section className="py-8 bg-bg-primary border-b border-border sticky top-20 z-30 glass">
+      <section className="sticky top-20 z-30 border-b border-border bg-bg-primary py-5 glass">
         <div className="container-luxury">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             {/* Category Tabs */}
-            <div className="flex flex-wrap gap-2">
+            <div className="flex w-full gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:w-auto lg:pb-0">
               {CATEGORIES.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
-                  className={`px-4 py-2 rounded-full text-xs uppercase tracking-wider transition-all duration-300 ${
+                  className={`shrink-0 rounded-full px-4 py-2 text-xs uppercase tracking-wider transition-all duration-300 ${
                     activeCategory === cat
                       ? 'bg-gold text-bg-primary font-semibold'
                       : 'border border-border text-text-secondary hover:border-gold/50 hover:text-gold'
@@ -79,14 +88,14 @@ export default function PortfolioPage() {
             </div>
 
             {/* Search */}
-            <div className="relative">
+            <div className="relative w-full shrink-0 sm:w-64">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" />
               <input
                 type="text"
                 placeholder="Search portfolio..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-bg-card border border-border rounded-full text-sm text-text-primary placeholder:text-text-muted outline-none w-64 transition-all duration-300 focus:border-gold focus:shadow-[0_0_0_3px_rgba(212,175,55,0.15)]"
+                className="w-full rounded-full border border-border bg-bg-card text-sm text-text-primary outline-none transition-all duration-300 placeholder:text-text-muted focus:border-gold focus:shadow-[0_0_0_3px_rgba(212,175,55,0.15)]"
                 style={{ padding: '10px 16px 10px 40px' }}
               />
             </div>
@@ -102,31 +111,34 @@ export default function PortfolioPage() {
               <p className="text-text-muted text-lg">No projects found matching your criteria.</p>
             </div>
           ) : (
-            <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
+            <div className="columns-1 gap-5 sm:columns-2 lg:columns-3">
               {filtered.map((item, idx) => (
-                <div
+                <button
+                  type="button"
                   key={item.id}
-                  className="break-inside-avoid group relative rounded-2xl overflow-hidden cursor-pointer hover-lift"
+                  className="group relative mb-5 block w-full break-inside-avoid overflow-hidden rounded-lg bg-bg-card text-left cursor-pointer hover-lift"
                   onClick={() => setLightboxIndex(idx)}
+                  aria-label={`Open ${item.title} from ${item.location}`}
                 >
-                  <div className={idx % 3 === 0 ? 'aspect-[3/4]' : idx % 3 === 1 ? 'aspect-square' : 'aspect-[4/3]'}>
+                  <div className={`relative ${FRAME_RATIOS[(item.id - 1) % FRAME_RATIOS.length]}`}>
                     <Image
                       src={item.src}
                       alt={item.title}
                       fill
-                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      style={{ objectPosition: item.position }}
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     />
                   </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-                    <p className="text-[10px] uppercase tracking-[0.2em] text-gold mb-1">{item.category} • {item.location}</p>
-                    <h3 className="font-heading text-lg text-text-primary">{item.title}</h3>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/5 to-transparent transition-opacity duration-500 group-hover:opacity-90" />
+                  <div className="absolute inset-x-0 bottom-0 p-5 transition-transform duration-500 group-hover:-translate-y-1">
+                    <p className="mb-1 text-[10px] uppercase tracking-[0.2em] text-gold">{item.category} • {item.location}</p>
+                    <h3 className="font-heading text-xl text-white">{item.title}</h3>
                   </div>
-                  <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="absolute right-4 top-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                     <Maximize2 className="w-5 h-5 text-white/80" />
                   </div>
-                </div>
+                </button>
               ))}
             </div>
           )}

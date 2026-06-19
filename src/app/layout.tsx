@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     'luxury photography', 'wedding photography', 'premium photographer',
     'cinematic wedding', 'baby photography', 'pre-wedding shoot',
     'fashion photography', 'corporate photography', 'drone photography',
-    'photography studio India', 'Bangalore photographer',
+    'destination wedding photographer', 'international photography studio',
   ],
   authors: [{ name: 'Pro Shoot Studios' }],
   creator: 'Pro Shoot',
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   openGraph: {
     type: 'website',
-    locale: 'en_IN',
+    locale: 'en_US',
     url: siteUrl,
     siteName: 'Pro Shoot',
     title: 'Pro Shoot — Premium Photography & Cinematic Storytelling',

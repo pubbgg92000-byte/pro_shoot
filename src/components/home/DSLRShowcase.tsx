@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
+import { ChevronDown } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -14,9 +15,12 @@ const DESKTOP_FRAME_PATH = '/sequences/dslr_assembly';
 const MOBILE_FRAME_PATH = '/sequences/dslr_mobile';
 const INITIAL_PRELOAD_FRAMES = 20;
 const FRAME_LOOKAHEAD = 12;
-const START_HOLD = 24;
-const END_HOLD = 36;
+const START_HOLD = 16;
+const END_HOLD = 24;
 const PIXELS_PER_TIMELINE_UNIT = 18;
+// Skip the first N frames — start mid-assembly so it feels immediate
+const DESKTOP_START_FRAME = 200;
+const MOBILE_START_FRAME = 150;
 
 const isMobileQuery = '(max-width: 767px)';
 
@@ -30,6 +34,10 @@ type TextSlide = {
     href: string;
   };
   containerClass?: string;
+};
+
+type DSLRShowcaseProps = {
+  fullSequence?: boolean;
 };
 
 const TEXT_SLIDES: TextSlide[] = [
@@ -55,11 +63,10 @@ const TEXT_SLIDES: TextSlide[] = [
   },
 ];
 
-export function DSLRShowcase() {
+export function DSLRShowcase({ fullSequence = false }: DSLRShowcaseProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const textRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const [imagesLoaded, setImagesLoaded] = useState(false);
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const loadedFramesRef = useRef<boolean[]>([]);
   const loadingFramesRef = useRef<Set<number>>(new Set());
@@ -111,13 +118,25 @@ export function DSLRShowcase() {
     loadingFramesRef.current = new Set();
     loadFrameRef.current = loadFrame;
 
+    const startFrame = fullSequence
+      ? 0
+      : isMobile
+        ? MOBILE_START_FRAME
+        : DESKTOP_START_FRAME;
+    frameIndexRef.current.value = startFrame;
+
+    // Preload from startFrame first so it appears immediately
     Promise.all(
-      Array.from({ length: INITIAL_PRELOAD_FRAMES }, (_, index) => loadFrame(index))
+      Array.from({ length: INITIAL_PRELOAD_FRAMES }, (_, i) => loadFrame(startFrame + i))
     ).then(async () => {
       if (isCancelled) return;
-      setImagesLoaded(true);
+      renderFrameRef.current();
 
-      for (let i = INITIAL_PRELOAD_FRAMES; i < totalFrames && !isCancelled; i += 1) {
+      // Then fill in earlier frames (for back-scroll) and later frames
+      for (let i = startFrame + INITIAL_PRELOAD_FRAMES; i < totalFrames && !isCancelled; i += 1) {
+        await loadFrame(i);
+      }
+      for (let i = 0; i < startFrame && !isCancelled; i += 1) {
         await loadFrame(i);
       }
     });
@@ -131,12 +150,20 @@ export function DSLRShowcase() {
         }
       });
     };
-  }, []);
+  }, [fullSequence]);
 
   useGSAP(() => {
-    if (!imagesLoaded || !canvasRef.current || !sectionRef.current) return;
+    if (!canvasRef.current || !sectionRef.current) return;
 
-    const totalFrames = totalFramesRef.current;
+    const isMobile = window.matchMedia(isMobileQuery).matches;
+    const totalFrames = isMobile ? MOBILE_FRAMES : DESKTOP_FRAMES;
+    const startFrame = fullSequence
+      ? 0
+      : isMobile
+        ? MOBILE_START_FRAME
+        : DESKTOP_START_FRAME;
+    totalFramesRef.current = totalFrames;
+    frameIndexRef.current.value = startFrame;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -202,14 +229,16 @@ export function DSLRShowcase() {
     updateCanvas();
     gsap.set(textRefs.current, { autoAlpha: 0, y: 30, scale: 0.96 });
 
+    const remainingFrames = totalFrames - 1 - startFrame;
+
     const timeline = gsap.timeline({
       scrollTrigger: {
         trigger: sectionRef.current,
         start: 'top top',
         end: () =>
           `+=${Math.max(
-            window.innerHeight * 5,
-            (START_HOLD + totalFrames - 1 + END_HOLD) * PIXELS_PER_TIMELINE_UNIT
+            window.innerHeight * (fullSequence ? 5 : 2),
+            (START_HOLD + remainingFrames + END_HOLD) * PIXELS_PER_TIMELINE_UNIT
           )}`,
         pin: true,
         pinSpacing: true,
@@ -224,12 +253,11 @@ export function DSLRShowcase() {
       .to({}, { duration: START_HOLD })
       .to(frameIndexRef.current, {
         value: totalFrames - 1,
-        duration: totalFrames - 1,
+        duration: remainingFrames,
         ease: 'none',
         snap: { value: 1 },
         onUpdate: () => {
           const frame = Math.round(frameIndexRef.current.value);
-
           if (frame !== lastFrameRef.current) {
             lastFrameRef.current = frame;
             updateCanvas();
@@ -281,9 +309,15 @@ export function DSLRShowcase() {
       }
     };
 
-    addTextReveal(0, 0, START_HOLD + Math.round(56 * r));
-    addTextReveal(1, START_HOLD + Math.round(108 * r), Math.round(48 * r));
-    addTextReveal(2, START_HOLD + Math.round(208 * r), END_HOLD + Math.round(46 * r), false);
+    if (fullSequence) {
+      addTextReveal(0, 0, START_HOLD + Math.round(56 * r));
+      addTextReveal(1, START_HOLD + Math.round(108 * r), Math.round(48 * r));
+      addTextReveal(2, START_HOLD + Math.round(208 * r), END_HOLD + Math.round(46 * r), false);
+    } else {
+      addTextReveal(0, 0, START_HOLD + Math.round(18 * r));
+      addTextReveal(1, START_HOLD + Math.round(36 * r), Math.round(24 * r));
+      addTextReveal(2, START_HOLD + Math.round(68 * r), END_HOLD + Math.round(20 * r), false);
+    }
 
     const handleResize = () => {
       resizeCanvas();
@@ -305,7 +339,7 @@ export function DSLRShowcase() {
       window.removeEventListener('resize', handleResize);
       ScrollTrigger.removeEventListener('refresh', refreshCanvas);
     };
-  }, { scope: sectionRef, dependencies: [imagesLoaded] });
+  }, { scope: sectionRef, dependencies: [fullSequence] });
 
   return (
     <section
@@ -364,6 +398,12 @@ export function DSLRShowcase() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Scroll indicator (moved from hero) */}
+        <div className="absolute bottom-[max(1.25rem,env(safe-area-inset-bottom))] left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2 sm:bottom-8">
+          <span className="text-[10px] uppercase tracking-[0.3em] text-gray-400">Scroll</span>
+          <ChevronDown className="w-4 h-4 text-gold animate-scroll-indicator" />
         </div>
       </div>
     </section>

@@ -7,14 +7,14 @@ import { AboutAnimations } from '@/components/about/AboutAnimations';
 
 export const metadata: Metadata = {
   title: 'About Us',
-  description: `Discover the story behind ${BRAND.name} — India's premier luxury photography studio. ${BRAND.stats.years}+ years of crafting timeless imagery for weddings, families, and brands.`,
+  description: `Discover the story behind ${BRAND.name} — a luxury photography studio creating timeless imagery for weddings, families, and brands worldwide.`,
 };
 
 const TIMELINE = [
   { year: '2014', title: 'The Beginning', desc: 'Founded with a single camera and an unwavering vision for cinematic storytelling.' },
-  { year: '2016', title: 'First Award', desc: 'Recognized by the Indian Photography Association for excellence in wedding photography.' },
+  { year: '2016', title: 'First Recognition', desc: 'Recognized for excellence in wedding photography and visual storytelling.' },
   { year: '2018', title: 'Studio Launch', desc: 'Opened our flagship studio in Bangalore with state-of-the-art equipment and lighting.' },
-  { year: '2020', title: 'Going National', desc: 'Expanded to cover destination weddings across 15 cities in India.' },
+  { year: '2020', title: 'Destination Stories', desc: 'Expanded to cover celebrations and creative productions across new destinations.' },
   { year: '2022', title: '500+ Weddings', desc: 'Crossed the milestone of 500 weddings, each one a unique visual masterpiece.' },
   { year: '2024', title: 'International Reach', desc: 'First international wedding coverage, expanding into destination shoots worldwide.' },
 ];
@@ -79,9 +79,9 @@ export default function AboutPage() {
                 Redefining <span className="text-gold-gradient">Premium</span>
               </h2>
               <p className="text-text-secondary leading-relaxed">
-                To be recognized as India&apos;s most trusted and artistically acclaimed photography
-                studio — setting the global standard for luxury visual storytelling while making
-                premium photography accessible to every family that values their memories.
+                To be recognized as a trusted, artistically acclaimed photography studio with a
+                worldwide point of view — setting a higher standard for luxury visual storytelling
+                for people and brands who deeply value their stories.
               </p>
             </div>
           </div>

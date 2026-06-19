@@ -6,16 +6,17 @@ import Link from 'next/link';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
+import { CATEGORY_IMAGES } from '@/lib/imageData';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const PORTFOLIO_ITEMS = [
-  { id: 1, src: '/images/shoot-3.png', title: 'The Golden Hour', category: 'Wedding' },
-  { id: 2, src: '/generated/portfolio-prewedding.png', title: 'Tea Garden Romance', category: 'Pre-Wedding' },
-  { id: 3, src: '/images/baby-shoot-1.png', title: 'First Light', category: 'Baby' },
-  { id: 4, src: '/generated/portfolio-fashion.png', title: 'Royal Heritage', category: 'Fashion' },
-  { id: 5, src: '/generated/portfolio-maternity.png', title: 'Cherry Blossom', category: 'Maternity' },
-  { id: 6, src: '/images/shoot-2.png', title: 'Eternal Vows', category: 'Wedding' },
+  { src: CATEGORY_IMAGES.wedding[1],    title: 'The Golden Hour',    category: 'Wedding' },
+  { src: CATEGORY_IMAGES.preWedding[1], title: 'Tea Garden Romance', category: 'Pre-Wedding' },
+  { src: CATEGORY_IMAGES.baby[0],       title: 'First Light',        category: 'Baby' },
+  { src: CATEGORY_IMAGES.fashion[1],    title: 'Royal Heritage',     category: 'Fashion' },
+  { src: CATEGORY_IMAGES.maternity[1],  title: 'Cherry Blossom',     category: 'Maternity' },
+  { src: CATEGORY_IMAGES.drone[1],      title: 'Skyline Dreams',     category: 'Drone' },
 ];
 
 export function PortfolioShowcase() {
@@ -103,7 +104,7 @@ export function PortfolioShowcase() {
         <div ref={containerRef} className="flex h-[52dvh] w-max items-center gap-4 px-[6vw] will-change-transform sm:gap-6 md:h-[58dvh]">
           {PORTFOLIO_ITEMS.map((item, i) => (
             <div
-              key={item.id}
+              key={`${item.src}-${i}`}
               ref={(el) => { if (el) cardsRef.current[i] = el; }}
               className="group relative h-full w-[78vw] shrink-0 cursor-pointer overflow-hidden rounded-2xl sm:w-[52vw] md:w-[36vw] lg:w-[26vw]"
             >
@@ -114,7 +115,8 @@ export function PortfolioShowcase() {
                 className="object-cover transition-transform duration-700 group-hover:scale-105"
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent opacity-80 transition-opacity duration-500 md:opacity-60 md:group-hover:opacity-90" />
+              {/* Always-on dark overlay to match dark theme */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20 transition-opacity duration-500 group-hover:from-black/95 group-hover:via-black/55" />
               <div className="absolute bottom-0 left-0 right-0 p-6 opacity-100 transition-all duration-500 md:translate-y-4 md:p-8 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100">
                 <p className="text-xs uppercase tracking-[0.2em] text-gold mb-2">{item.category}</p>
                 <h3 className="font-heading text-2xl text-text-primary">{item.title}</h3>

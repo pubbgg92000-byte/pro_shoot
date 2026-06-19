@@ -3,7 +3,7 @@
 import { useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { BLOG_POSTS } from '@/lib/constants';
+import { INSIGHTS } from '@/lib/constants';
 import { formatDate } from '@/lib/utils';
 import { ArrowUpRight, Clock } from 'lucide-react';
 import gsap from 'gsap';
@@ -82,7 +82,7 @@ export function BlogHighlights() {
             </h2>
           </div>
           <Link
-            href="/blog"
+            href="/insights"
             className="text-sm text-gold hover:text-gold-light transition-colors duration-300 uppercase tracking-wider"
           >
             View All Articles →
@@ -90,24 +90,25 @@ export function BlogHighlights() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {BLOG_POSTS.map((post, i) => (
+          {INSIGHTS.slice(0, 3).map((post, i) => (
             <Link
-              key={post.slug}
-              href={`/blog/${post.slug}`}
+              key={post.id}
+              href="/insights"
               ref={(el) => { cardsRef.current[i] = el; }}
               className="group will-change-transform"
             >
               <div className="relative aspect-[4/3] rounded-2xl overflow-hidden mb-6">
-                <div ref={(el) => { imagesRef.current[i] = el; }} className="absolute -inset-y-[6%] inset-x-0 will-change-transform">
+                <div ref={(el) => { imagesRef.current[i] = el; }} className="absolute inset-0 will-change-transform">
                   <Image
                     src={post.image}
                     alt={post.title}
                     fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
                     sizes="(max-width: 768px) 100vw, 33vw"
                   />
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                {/* Persistent dark overlay matching site theme */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
               </div>
 
               <div className="flex items-center gap-3 mb-3">

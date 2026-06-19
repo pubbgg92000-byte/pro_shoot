@@ -6,14 +6,50 @@ import { usePathname } from 'next/navigation';
 import { NAV_LINKS, BRAND } from '@/lib/constants';
 import { getWhatsAppUrl } from '@/lib/utils';
 import { WhatsAppIcon } from '@/components/icons/WhatsAppIcon';
-import { Menu, X, ChevronDown, Phone } from 'lucide-react';
+import {
+  BadgeIndianRupee,
+  Baby,
+  BookOpen,
+  Briefcase,
+  Building2,
+  Camera,
+  ChevronDown,
+  Flower2,
+  Heart,
+  Menu,
+  Package,
+  Phone,
+  Plane,
+  Shirt,
+  Sparkles,
+  Video,
+  X,
+  type LucideIcon,
+} from 'lucide-react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
+
+const NAV_ICON_MAP: Record<string, LucideIcon> = {
+  BadgeIndianRupee,
+  Baby,
+  BookOpen,
+  Briefcase,
+  Building2,
+  Camera,
+  Flower2,
+  Heart,
+  Package,
+  Plane,
+  Shirt,
+  Sparkles,
+  Video,
+};
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
   const navRef = useRef<HTMLElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
@@ -73,31 +109,32 @@ export function Navbar() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-0">
+          <div className="hidden lg:flex items-center gap-1">
             {NAV_LINKS.map((link) => {
               const active = isActive(link.href);
+              const hasChildren = 'children' in link && link.children;
               return (
                 <div
                   key={link.href}
                   className="relative"
-                  onMouseEnter={() =>
-                    'children' in link && link.children
-                      ? setActiveDropdown(link.label)
-                      : undefined
-                  }
+                  onMouseEnter={() => hasChildren ? setActiveDropdown(link.label) : undefined}
                   onMouseLeave={() => setActiveDropdown(null)}
                 >
                   <Link
                     href={link.href}
-                    className={`relative px-2.5 xl:px-3.5 py-2 text-[13px] xl:text-sm tracking-wide transition-colors duration-300 flex items-center gap-1 whitespace-nowrap ${
+                    onClick={() => {
+                      setActiveDropdown(null);
+                      setIsOpen(false);
+                    }}
+                    className={`relative px-3 xl:px-4 py-2 text-[13px] xl:text-sm tracking-wide transition-colors duration-300 flex items-center gap-1 whitespace-nowrap ${
                       active
                         ? 'text-gold font-medium'
                         : 'text-text-secondary hover:text-text-primary'
                     }`}
                   >
                     {link.label}
-                    {'children' in link && link.children && (
-                      <ChevronDown className="w-3 h-3" />
+                    {hasChildren && (
+                      <ChevronDown className={`w-3 h-3 transition-transform duration-300 ${activeDropdown === link.label ? 'rotate-180' : ''}`} />
                     )}
                     {/* Active underline indicator */}
                     {active && (
@@ -106,38 +143,43 @@ export function Navbar() {
                   </Link>
 
                   {/* Dropdown */}
-                  {'children' in link &&
-                    link.children &&
-                    activeDropdown === link.label && (
-                      <div className="absolute top-full left-0 pt-2 min-w-[280px]">
-                        <div className="bg-bg-primary/95 backdrop-blur-xl rounded-xl p-2 shadow-2xl shadow-black/40 border border-white/8">
-                          {link.children.map((child) => {
-                            const childActive = isActive(child.href);
-                            return (
-                              <Link
-                                key={child.href}
-                                href={child.href}
-                                className={`block px-4 py-3 rounded-lg text-sm transition-all duration-200 ${
-                                  childActive
-                                    ? 'text-gold bg-gold/10'
-                                    : 'text-text-secondary hover:text-text-primary hover:bg-white/5'
-                                }`}
-                              >
-                                {child.label}
-                              </Link>
-                            );
-                          })}
-                          <div className="border-t border-border mt-1 pt-1">
+                  {hasChildren && activeDropdown === link.label && (
+                    <div className="absolute left-1/2 top-full w-[560px] max-w-[calc(100vw-3rem)] -translate-x-1/2 pt-2">
+                      <div className="max-h-[500px] overflow-y-auto rounded-xl border border-white/8 bg-bg-primary/95 p-3 shadow-2xl shadow-black/40 backdrop-blur-xl">
+                        <div className="grid grid-cols-2 gap-2">
+                        {link.children.map((child) => {
+                          const childActive = isActive(child.href);
+                          const Icon = NAV_ICON_MAP[child.icon] ?? Camera;
+                          return (
                             <Link
-                              href="/services"
-                              className="block px-4 py-3 rounded-lg text-sm text-gold hover:bg-white/5 transition-all duration-200"
+                              key={`${child.label}-${child.href}`}
+                              href={child.href}
+                              onClick={() => setActiveDropdown(null)}
+                              className={`flex items-center gap-3 rounded-lg px-3 py-3 text-sm transition-all duration-200 ${
+                                childActive
+                                  ? 'text-gold bg-gold/10'
+                                  : 'text-text-secondary hover:text-text-primary hover:bg-white/5'
+                              }`}
                             >
-                              View All Services →
+                              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-gold/20 bg-gold/10 text-gold">
+                                <Icon className="h-4 w-4" />
+                              </span>
+                              <span className="leading-tight">{child.label}</span>
                             </Link>
-                          </div>
+                          );
+                        })}
+                        </div>
+                        <div className="border-t border-border mt-1 pt-1">
+                          <Link
+                            href="/services"
+                            className="block px-4 py-3 rounded-lg text-sm text-gold hover:bg-white/5 transition-all duration-200"
+                          >
+                            View All Services →
+                          </Link>
                         </div>
                       </div>
-                    )}
+                    </div>
+                  )}
                 </div>
               );
             })}
@@ -189,32 +231,50 @@ export function Navbar() {
           <div className="container-luxury flex min-h-[calc(100svh-4rem)] flex-col gap-0 py-5 pb-[max(2rem,env(safe-area-inset-bottom))]">
             {NAV_LINKS.map((link) => {
               const active = isActive(link.href);
+              const hasChildren = 'children' in link && link.children;
+              const isExpanded = mobileExpanded === link.label;
               return (
                 <div key={link.href}>
-                  <Link
-                    href={link.href}
-                    onClick={() => setIsOpen(false)}
-                    className={`block border-b border-border py-3 font-heading text-[1.65rem] ${
-                      active ? 'text-gold' : 'text-text-primary'
-                    }`}
-                  >
-                    {link.label}
-                    {active && <span className="inline-block w-2 h-2 rounded-full bg-gold ml-3 mb-1" />}
-                  </Link>
-                  {'children' in link && link.children && (
-                    <div className="space-y-1 py-2 pl-5">
-                      {link.children.map((child) => (
-                        <Link
-                          key={child.href}
-                          href={child.href}
-                          onClick={() => setIsOpen(false)}
-                          className={`block py-2.5 text-base ${
-                            isActive(child.href) ? 'text-gold' : 'text-text-secondary'
-                          }`}
-                        >
-                          {child.label}
-                        </Link>
-                      ))}
+                  <div className="flex items-center border-b border-border">
+                    <Link
+                      href={link.href}
+                      onClick={() => setIsOpen(false)}
+                      className={`flex-1 block py-3 font-heading text-[1.65rem] ${
+                        active ? 'text-gold' : 'text-text-primary'
+                      }`}
+                    >
+                      {link.label}
+                      {active && <span className="inline-block w-2 h-2 rounded-full bg-gold ml-3 mb-1" />}
+                    </Link>
+                    {hasChildren && (
+                      <button
+                        onClick={() => setMobileExpanded(isExpanded ? null : link.label)}
+                        className="p-3 text-text-muted hover:text-gold transition-colors"
+                        aria-label={isExpanded ? 'Collapse' : 'Expand'}
+                      >
+                        <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
+                      </button>
+                    )}
+                  </div>
+                  {/* Accordion children */}
+                  {hasChildren && isExpanded && (
+                    <div className="max-h-[58svh] space-y-1 overflow-y-auto border-b border-border/50 bg-white/[0.02] py-2 pl-3 pr-1">
+                      {link.children.map((child) => {
+                        const Icon = NAV_ICON_MAP[child.icon] ?? Camera;
+                        return (
+                          <Link
+                            key={`${child.label}-${child.href}`}
+                            href={child.href}
+                            onClick={() => setIsOpen(false)}
+                            className={`flex items-center gap-3 rounded-lg px-2 py-2.5 text-base transition-colors ${
+                              isActive(child.href) ? 'text-gold' : 'text-text-secondary hover:text-text-primary'
+                            }`}
+                          >
+                            <Icon className="h-4 w-4 shrink-0 text-gold" />
+                            {child.label}
+                          </Link>
+                        );
+                      })}
                     </div>
                   )}
                 </div>

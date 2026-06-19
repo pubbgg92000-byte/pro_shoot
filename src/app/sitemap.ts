@@ -5,8 +5,8 @@ const BASE_URL = 'https://proshoot.in';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages = [
-    '', '/about', '/services', '/portfolio', '/pricing', '/albums',
-    '/contact', '/booking', '/testimonials', '/faq', '/blog',
+    '', '/about', '/services', '/portfolio', '/pricing', '/albums', '/rentals',
+    '/contact', '/booking', '/testimonials', '/faq', '/blog', '/insights',
     '/careers', '/thank-you', '/privacy-policy', '/terms',
   ].map((route) => ({
     url: `${BASE_URL}${route}`,

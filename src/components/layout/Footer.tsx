@@ -25,7 +25,6 @@ const LinkedinIcon = ({ className }: { className?: string }) => (
 );
 
 export function Footer() {
-  const featuredServices = SERVICES.filter((s) => s.featured).slice(0, 6);
   const currentYear = new Date().getFullYear();
 
   return (
@@ -105,7 +104,7 @@ export function Footer() {
               Services
             </h4>
             <ul className="grid grid-cols-2 gap-x-6 gap-y-3 sm:block sm:space-y-3">
-              {featuredServices.map((service) => (
+              {SERVICES.map((service) => (
                 <li key={service.slug}>
                   <Link
                     href={`/services/${service.slug}`}
@@ -116,14 +115,6 @@ export function Footer() {
                   </Link>
                 </li>
               ))}
-              <li>
-                <Link
-                  href="/services"
-                  className="group inline-flex items-center text-gold text-sm hover:text-gold-light transition-all duration-300 hover:translate-x-1"
-                >
-                  View All Services →
-                </Link>
-              </li>
             </ul>
           </div>
 
@@ -187,7 +178,7 @@ export function Footer() {
               Terms of Service
             </Link>
             <span className="flex items-center gap-1">
-              Crafted with <Heart className="w-3 h-3 text-gold animate-pulse-gold" /> in India
+              Crafted with <Heart className="w-3 h-3 text-gold animate-pulse-gold" /> for stories everywhere
             </span>
           </div>
         </div>

@@ -119,7 +119,7 @@ export default function PricingPage() {
             <h2 className="font-heading text-4xl md:text-5xl">Starting <span className="text-gold-gradient">Ranges</span></h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
-            {SERVICES.filter(s => s.featured).map((s) => (
+            {SERVICES.slice(0, 4).map((s) => (
               <Link
                 key={s.slug}
                 href={`/services/${s.slug}`}

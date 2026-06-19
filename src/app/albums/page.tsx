@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Gem, BookOpen } from 'lucide-react';
+import { BookOpen, FileText, Layers, Package, Ruler, Shield, Sparkles, Stamp } from 'lucide-react';
+import { CATEGORY_IMAGES } from '@/lib/imageData';
 
 export const metadata: Metadata = {
   title: 'Albums',
@@ -9,18 +10,23 @@ export const metadata: Metadata = {
 };
 
 const ALBUM_CATEGORIES = [
-  { title: 'Wedding Albums', desc: 'Luxury coffee-table albums that preserve your wedding story in exquisite detail.', image: '/images/shoot-3.png', price: 'Starting from ₹15,000+' },
-  { title: 'Baby Albums', desc: 'Tender milestone albums capturing every precious moment of your little one\'s journey.', image: '/images/baby-shoot-1.png', price: 'Starting from ₹8,000+' },
-  { title: 'Family Albums', desc: 'Heritage-quality family portraits and celebrations preserved for generations.', image: '/images/shoot-2.png', price: 'Starting from ₹10,000+' },
-  { title: 'Fashion Lookbooks', desc: 'Editorial-grade lookbooks for designers, models, and fashion brands.', image: '/images/shoot-3.png', price: 'Starting from ₹20,000+' },
-  { title: 'Corporate Albums', desc: 'Professional brand documentation and event coverage in premium presentation.', image: '/images/shoot-2.png', price: 'Starting from ₹12,000+' },
-  { title: 'Product Catalogs', desc: 'High-end product photography catalogs for luxury and e-commerce brands.', image: '/images/baby-shoot-1.png', price: 'Starting from ₹15,000+' },
+  { title: 'Wedding Albums', desc: 'Luxury coffee-table albums that preserve your wedding story in exquisite detail.', image: CATEGORY_IMAGES.wedding[3], price: 'Starting from ₹15,000+' },
+  { title: 'Baby Albums', desc: 'Tender milestone albums capturing every precious moment of your little one\'s journey.', image: CATEGORY_IMAGES.baby[3], price: 'Starting from ₹8,000+' },
+  { title: 'Family Albums', desc: 'Heritage-quality family portraits and celebrations preserved for generations.', image: '/generated/album-1.png', price: 'Starting from ₹10,000+' },
+  { title: 'Corporate Albums', desc: 'Professional brand documentation and event coverage in premium presentation.', image: CATEGORY_IMAGES.corporate[2], price: 'Starting from ₹12,000+' },
+  { title: 'Fashion Lookbooks', desc: 'Editorial-grade lookbooks for designers, models, and fashion brands.', image: CATEGORY_IMAGES.fashion[3], price: 'Starting from ₹20,000+' },
+  { title: 'Product Catalogs', desc: 'High-end product photography catalogs for luxury and e-commerce brands.', image: CATEGORY_IMAGES.products[2], price: 'Starting from ₹15,000+' },
 ];
 
 const FEATURES = [
-  'Premium leather & linen covers', 'Archival-quality paper', 'Flush-mount pages',
-  'Custom embossing & foil stamping', 'Multiple size options', 'Presentation box included',
-  'UV-protective coating', 'Handcrafted binding',
+  { label: 'Premium leather & linen covers', icon: BookOpen },
+  { label: 'Archival-quality paper', icon: FileText },
+  { label: 'Flush-mount pages', icon: Layers },
+  { label: 'Custom embossing & foil stamping', icon: Stamp },
+  { label: 'Multiple size options', icon: Ruler },
+  { label: 'Presentation box included', icon: Package },
+  { label: 'UV-protective coating', icon: Shield },
+  { label: 'Handcrafted binding', icon: Sparkles },
 ];
 
 export default function AlbumsPage() {
@@ -28,7 +34,7 @@ export default function AlbumsPage() {
     <>
       <section className="relative h-[60vh] min-h-[400px] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
-          <Image src="/images/shoot-3.png" alt="Pro Shoot luxury albums" fill className="object-cover" priority sizes="100vw" />
+          <Image src={CATEGORY_IMAGES.products[0]} alt="Pro Shoot luxury albums" fill className="object-cover" priority sizes="100vw" />
           <div className="absolute inset-0 bg-bg-primary/75" />
           <div className="absolute inset-0 bg-gradient-to-t from-bg-primary via-transparent to-bg-primary/50" />
         </div>
@@ -50,7 +56,7 @@ export default function AlbumsPage() {
             {ALBUM_CATEGORIES.map((album) => (
               <div key={album.title} className="group glass-light rounded-2xl overflow-hidden hover-lift">
                 <div className="relative aspect-[4/3] overflow-hidden">
-                  <Image src={album.image} alt={album.title} fill className="object-cover transition-transform duration-700 group-hover:scale-110" sizes="33vw" />
+                  <Image src={album.image} alt={album.title} fill className="object-cover object-center transition-transform duration-700 group-hover:scale-110" sizes="33vw" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 </div>
                 <div className="p-6">
@@ -79,10 +85,10 @@ export default function AlbumsPage() {
             </h2>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {FEATURES.map((f) => (
-              <div key={f} className="text-center p-4 rounded-xl border border-border hover:border-border-gold transition-colors duration-300">
-                <Gem className="w-5 h-5 text-gold mx-auto mb-3" />
-                <p className="text-text-secondary text-sm">{f}</p>
+            {FEATURES.map(({ label, icon: Icon }) => (
+              <div key={label} className="text-center p-4 rounded-xl border border-border hover:border-border-gold transition-colors duration-300">
+                <Icon className="w-5 h-5 text-gold mx-auto mb-3" />
+                <p className="text-text-secondary text-sm">{label}</p>
               </div>
             ))}
           </div>

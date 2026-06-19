@@ -1,11 +1,12 @@
 'use client';
 
 import { useRef } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
+import { ImageSlider } from '@/components/ui/ImageSlider';
+import { CATEGORY_IMAGES } from '@/lib/imageData';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -46,15 +47,26 @@ export function BehindTheLens() {
     <section ref={sectionRef} className="section-padding bg-bg-primary overflow-hidden" id="behind-the-lens">
       <div className="container-luxury">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          {/* Image */}
+          {/* Image Slider — BTS + wedding mix */}
           <div ref={imageRef} className="relative aspect-[4/5] rounded-2xl overflow-hidden will-change-transform">
-            <Image
-              src="/images/shoot-2.png"
-              alt="Behind the lens — our photography process"
-              fill
-              className="object-cover"
-              sizes="(max-width: 1024px) 100vw, 50vw"
-            />
+            {/* Wrapper gives the fill images explicit dimensions */}
+            <div className="absolute inset-0">
+              <ImageSlider
+                images={[
+                  CATEGORY_IMAGES.bts[0],
+                  CATEGORY_IMAGES.bts[1],
+                  CATEGORY_IMAGES.bts[2],
+                  CATEGORY_IMAGES.wedding[2],
+                ]}
+                alt="Behind the lens — our photography process"
+                interval={4000}
+                effect="fade"
+                showArrows={false}
+                showDots={true}
+                className="h-full w-full"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+              />
+            </div>
             <div className="absolute inset-0 bg-gradient-to-t from-bg-primary/50 to-transparent" />
             {/* Gold corner accents */}
             <div className="absolute top-6 left-6 w-12 h-12 border-l-2 border-t-2 border-gold/40" />

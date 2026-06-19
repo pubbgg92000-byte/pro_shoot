@@ -78,7 +78,7 @@ export default function RentalsPage() {
 
       {/* Animation Sections */}
       <div className="border-y border-border">
-        <DSLRShowcase />
+        <DSLRShowcase fullSequence />
         <DroneExperience />
       </div>
 

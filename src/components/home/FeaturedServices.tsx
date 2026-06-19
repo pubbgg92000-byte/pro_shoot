@@ -16,8 +16,6 @@ export function FeaturedServices() {
   const cardsRef = useRef<(HTMLAnchorElement | null)[]>([]);
   const headingRef = useRef<HTMLDivElement>(null);
 
-  const featured = SERVICES.filter((s) => s.featured);
-
   useGSAP(() => {
     // Heading reveal
     if (headingRef.current) {
@@ -47,7 +45,7 @@ export function FeaturedServices() {
         y: 0,
         opacity: 1,
         duration: 0.8,
-        stagger: 0.1,
+        stagger: 0.08,
         ease: 'power3.out',
         scrollTrigger: {
           trigger: sectionRef.current,
@@ -72,9 +70,9 @@ export function FeaturedServices() {
           </p>
         </div>
 
-        {/* Services Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {featured.map((service, i) => (
+        {/* Services Grid — show all 9 */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {SERVICES.map((service, i) => (
             <Link
               key={service.slug}
               href={`/services/${service.slug}`}
@@ -87,7 +85,7 @@ export function FeaturedServices() {
                 alt={service.title}
                 fill
                 className="object-cover transition-transform duration-700 group-hover:scale-110"
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               />
 
               {/* Gradient Overlay */}

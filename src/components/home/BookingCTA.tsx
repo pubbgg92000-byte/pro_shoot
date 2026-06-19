@@ -71,10 +71,10 @@ export function BookingCTA() {
       {/* Background Image */}
       <div ref={backgroundRef} className="absolute inset-0 will-change-transform">
         <Image
-          src="/images/shoot-3.png"
-          alt="Book your photography session"
+          src="/images/behind_the%20sceens/image%20copy%203.png"
+          alt="Camera operator preparing a cinematic photography session"
           fill
-          className="object-cover"
+          className="object-cover object-center"
           sizes="100vw"
         />
         <div className="absolute inset-0 bg-bg-primary/55 backdrop-blur-[1px] md:bg-bg-primary/65" />

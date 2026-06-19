@@ -46,6 +46,17 @@
   --animate-float: float 6s ease-in-out infinite;
   --animate-pulse-gold: pulse-gold 2s ease-in-out infinite;
   --animate-scroll-indicator: scroll-indicator 2s ease-in-out infinite;
+  --animate-kenburns: kenburns 8s ease-out both;
+
+  @keyframes kenburns {
+    0% {
+      transform: scale(1);
+    }
+
+    100% {
+      transform: scale(1.08);
+    }
+  }
 
   @keyframes fade-up {
     from {
@@ -129,7 +140,7 @@
 html {
   scroll-behavior: smooth;
   width: 100%;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 body {
@@ -426,4 +437,73 @@ main {
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--color-text-secondary);
+}
+
+/* ---- Vignette Overlay ---- */
+.vignette::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(5, 5, 5, 0.4) 100%);
+  pointer-events: none;
+}
+
+/* ---- Gold Accent Overlay ---- */
+.gold-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.05) 0%, transparent 50%, rgba(212, 175, 55, 0.03) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ---- Carousel Drag ---- */
+.carousel-drag {
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.carousel-drag:active {
+  cursor: grabbing;
+}
+
+/* ---- Masonry Utilities ---- */
+.masonry-grid {
+  columns: 1;
+  column-gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .masonry-grid {
+    columns: 2;
+  }
+}
+
+@media (min-width: 1024px) {
+  .masonry-grid {
+    columns: 3;
+  }
+}
+
+@media (min-width: 1280px) {
+  .masonry-grid {
+    columns: 4;
+  }
+}
+
+/* ---- Insight Card Gradient ---- */
+.insight-gradient {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.04) 0%, transparent 100%);
+}
+
+/* ---- No Scrollbar (for carousels) ---- */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }

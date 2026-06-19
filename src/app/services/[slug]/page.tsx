@@ -48,7 +48,7 @@ export default async function ServicePage({ params }: Props) {
   const service = SERVICES.find((s) => s.slug === slug);
   if (!service) notFound();
 
-  const relatedServices = SERVICES.filter((s) => s.slug !== slug && s.featured).slice(0, 3);
+  const relatedServices = SERVICES.filter((s) => s.slug !== slug).slice(0, 3);
   const testimonials = TESTIMONIALS.slice(0, 2);
 
   return (
