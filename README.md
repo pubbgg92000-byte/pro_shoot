@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Pro Shoot
 
-## Getting Started
+**Premium Photography & Cinematic Storytelling**
 
-First, run the development server:
+An award-winning luxury photography studio portfolio web application. It showcases premium photography services including weddings, pre-wedding shoots, baby photography, fashion, corporate, and cinematic storytelling.
+
+## 🚀 Technologies Used
+
+- **Framework:** [Next.js](https://nextjs.org/) (App Router)
+- **UI Library:** [React](https://react.dev/)
+- **Styling:** [Tailwind CSS v4](https://tailwindcss.com/)
+- **Animations:** [GSAP](https://gsap.com/) & [@gsap/react](https://gsap.com/docs/v3/React/)
+- **Smooth Scrolling:** [Lenis](https://lenis.darkroom.engineering/)
+- **Icons:** [Lucide React](https://lucide.dev/)
+- **Forms & Validation:** [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/)
+- **Language:** TypeScript
+
+## ✨ Key Features
+
+- **Premium Aesthetics:** Dark mode-inspired, luxury UI with carefully selected typography (Playfair Display, Cormorant Garamond, Inter).
+- **Cinematic Animations:** Uses GSAP for scroll-driven micro-interactions and Lenis for fluid smooth scrolling.
+- **Comprehensive Portfolio:** Includes albums, a full portfolio, service pages, and a lightbox for immersive image viewing.
+- **Client Services:** Booking forms, contact pages, pricing, and FAQ.
+- **SEO Optimized:** Fully configured metadata, open graph tags, and JSON-LD schema for local business SEO.
+- **Fully Responsive:** Optimized across desktop, tablet, and mobile devices.
+
+## 🛠️ Getting Started
+
+### Prerequisites
+Make sure you have [Node.js](https://nodejs.org/) installed on your machine.
+
+### Installation
+
+1. Clone the repository and navigate into the project directory:
+   ```bash
+   cd pro_shoot
+   ```
+2. Install the dependencies:
+   ```bash
+   npm install
+   ```
+
+### Development
+
+To start the local development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Build & Production
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+To build the application for production:
+```bash
+npm run build
+```
 
-## Learn More
+To start the production server:
+```bash
+npm run start
+```
 
-To learn more about Next.js, take a look at the following resources:
+## 📂 Project Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `/src/app` - Next.js App Router pages (Home, About, Portfolio, Booking, etc.)
+- `/src/components` - Reusable React components (UI elements, layout, GSAP integrations)
+- `/src/lib` - Utility functions, configurations, and dummy data 
+- `/public` - Static assets, fonts, and images
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📄 License
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Private repository. All rights reserved by Pro Shoot Studios.
